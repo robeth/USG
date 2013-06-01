@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    >
+
+    <RelativeLayout
+        
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFAAAAAA"
+        android:orientation="vertical"
+        android:padding="5dp" >
+
+        <ImageView
+            android:id="@+id/patient_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="5dp"
+            android:adjustViewBounds="true"
+            android:maxHeight="48dp"
+            android:maxWidth="48dp"
+            android:src="@drawable/mother_icon" />
+
+        <TextView
+            android:id="@+id/patient_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/patient_photo"
+            android:layout_toRightOf="@+id/patient_photo"
+            android:text="Ibu A"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FF000000" />
+
+        <TextView
+            android:id="@+id/patient_freq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/patient_photo"
+            android:layout_alignLeft="@+id/patient_name"
+            android:text="TextView"
+            android:textColor="#FF000000" />
+
+        <TextView
+            android:id="@+id/patient_last_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/patient_name"
+            android:text="TextView"
+            android:textColor="#FF777777"
+            android:textStyle="italic" />
+    </RelativeLayout>
+
+</FrameLayout>

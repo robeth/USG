@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">USG</string>
+    <string-array name="usg_methods">
+        <item>RHT</item>
+        <item>IRHT</item>
+    </string-array>
+    <string name="usg_method_prom" >Metode</string>
+    <string name="usg_hc_default" >3.77 cm</string>
+    <string name="usg_bpd_default" >3.16 cm</string>
+</resources>

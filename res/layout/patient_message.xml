@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    
+    
+    <LinearLayout 
+        android:id="@+id/message_insert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft = "true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true">
+
+        <EditText
+            android:id="@+id/message_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:gravity="center_vertical" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/message_send"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Kirim"
+            android:gravity="center_vertical" />
+        
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/message_list"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/message_insert">
+    </ListView>
+</RelativeLayout>
