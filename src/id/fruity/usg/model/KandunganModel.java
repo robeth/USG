@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import android.database.Cursor;
 
-public class KandunganModel extends USGModel<KandunganModel> {
+public class KandunganModel extends USGModel<KandunganModel> implements Comparable<KandunganModel> {
 	private String idPasien;
 	private int noKandungan;
 	private boolean isFinish;
@@ -71,5 +71,12 @@ public class KandunganModel extends USGModel<KandunganModel> {
 	public KandunganModel cursorToItem(Cursor c) {
 		return new KandunganModel(c.getString(1), c.getInt(0), c.getInt(2) == 1);
 	}
+
+	@Override
+	public int compareTo(KandunganModel another) {
+		return getNoKandungan()-another.getNoKandungan();
+	}
+	
+	
 
 }

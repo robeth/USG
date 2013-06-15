@@ -45,7 +45,7 @@ public class LoginActivity extends Activity{
 		super.onCreate(savedInstanceState);
 
 		this.deleteDatabase(USGDBHelper.DATABASE_NAME);
-		helper = new USGDBHelper(this);
+		helper = USGDBHelper.getInstance(this);
 		helper.open();
 		helper.test();
 		

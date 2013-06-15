@@ -1,8 +1,9 @@
 package id.fruity.usg;
 
 import id.fruity.usg.database.USGDBHelper;
-import id.fruity.usg.model.PasienModel;
-import android.database.Cursor;
+import id.fruity.usg.database.converter.PatientConverter;
+import id.fruity.usg.database.table.entry.Patient;
+import id.fruity.usg.util.DateUtils;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +17,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 
 public class PatientProfileFragment extends SherlockFragment {
 	 private USGDBHelper helper;
-	 private PasienModel pm;
+	 private Patient p;
 	 private String patientId;
 	 private ImageView photoView;
 	 private TextView ageText;
@@ -25,17 +26,12 @@ public class PatientProfileFragment extends SherlockFragment {
 	@Override
      public void onCreate(Bundle savedInstanceState) {
          super.onCreate(savedInstanceState);
-         helper = new USGDBHelper(getActivity());
+         helper = USGDBHelper.getInstance(getActivity());
          helper.open();
          Bundle b = getArguments();
          patientId = b.getString("patientId");
          Log.d("Profile Fragment", "Patient ID:"+patientId);
-         
-         PasienModel p = new PasienModel();
-         Cursor c = helper.getPasien(patientId);
-         c.moveToFirst();
-         pm = p.cursorToItem(c);
-         c.close();
+         p = PatientConverter.convert(helper.getPasien(patientId));
          helper.close();
      }
 
@@ -54,10 +50,10 @@ public class PatientProfileFragment extends SherlockFragment {
          phoneText = (EditText) v.findViewById(R.id.patient_phone);
          infoText = (EditText) v.findViewById(R.id.patient_info);
          
-         nameText.setText(pm.getName());
-         addressText.setText(pm.getAddress());
-         phoneText.setText(pm.getPhone());
-         infoText.setText(pm.getDescription());
+         nameText.setText(p.getName());
+         addressText.setText(p.getAddress());
+         phoneText.setText(p.getPhone());
+         infoText.setText(p.getDescription());
          
          setEditable(false);
          
@@ -67,14 +63,23 @@ public class PatientProfileFragment extends SherlockFragment {
      
      public void setEditable(boolean status){
     	 nameText.setEnabled(status);
-    	 nameText.setFocusable(status);
-    	 addressText.setEnabled(status);
     	 addressText.setEnabled(status);
     	 phoneText.setEnabled(status);
-    	 phoneText.setEnabled(status);
     	 infoText.setEnabled(status);
-    	 infoText.setEnabled(status);
-    	 
     	 
      }
+
+	public void notifyHasEditted() {
+		setEditable(false);
+		long currentTime = DateUtils.getCurrentLong();
+		p.setName(nameText.getText().toString());
+		p.setAddress(addressText.getText().toString());
+		p.setPhone(phoneText.getText().toString());
+		p.setDescription(infoText.getText().toString());
+		p.setDirty(true);
+		p.setModifyTimestampLong(currentTime);
+		helper.open();
+		helper.updatePatient(p);
+		helper.close();
+	}
 }

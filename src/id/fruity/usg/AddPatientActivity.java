@@ -56,7 +56,7 @@ public class AddPatientActivity extends SherlockActivity{
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setIcon(R.drawable.social_add_person);
 		
-		helper = new USGDBHelper(this);
+		helper = USGDBHelper.getInstance(this);
 		
 		photoView = (ImageView) findViewById(R.id.patient_photo);
 	    ageText = (TextView) findViewById(R.id.patient_age);

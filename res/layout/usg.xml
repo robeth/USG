@@ -1,200 +1,315 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="5dp">
+    android:layout_height="wrap_content" >
 
-    <ImageView
-        android:id="@+id/usg_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxWidth="256dp"
-        android:maxHeight="256dp"
-        android:adjustViewBounds="true"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/usg_sample" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp" >
 
-    <Spinner
-        android:id="@+id/usg_methods"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/usg_photo"
-        android:entries="@array/usg_methods"
-        android:prompt="@string/usg_method_prom" />
-
-    <TextView
-        android:id="@+id/usg_hc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/usg_methods"
-        android:layout_marginTop="10dp"
-        android:text="HC"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/usg_bpd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/usg_hc"
-        android:layout_marginTop="10dp"
-        android:text="BPD"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/usg_scale"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/usg_bpd"
-        android:layout_marginTop="10dp"
-        android:text="Scale"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    <EditText
-        android:id="@+id/usg_hc_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/usg_hc"
-        android:layout_toRightOf="@id/usg_hc"
-        android:layout_marginLeft="10dp"
-        android:inputType="numberDecimal"
-        android:editable="false"
-        android:hint="@string/usg_hc_default" >
-
-    </EditText>
-
-    <EditText
-        android:id="@+id/usg_bpd_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/usg_bpd"
-        android:layout_alignLeft="@+id/usg_hc_value"
-        android:editable="false"
-        android:inputType="numberDecimal"
-        android:hint="@string/usg_bpd_default" />
-    
-    <EditText
-        android:id="@+id/usg_scale_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/usg_scale"
-        android:layout_alignLeft="@+id/usg_hc_value"
-        android:editable="false"
-        android:inputType="numberDecimal"
-        android:hint="@string/usg_bpd_default" />
-    <RelativeLayout 
-        android:id="@+id/usg_params_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#FFAAAAAA"
-        android:padding="5dp"
-        android:layout_alignTop="@id/usg_hc"
-        android:layout_alignParentRight="true"
-        >
-
-        <TextView
-            android:id="@+id/usg_params_header"
+        <ImageView
+            android:id="@+id/usg_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Detail"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:adjustViewBounds="true"
+            android:maxHeight="256dp"
+            android:maxWidth="256dp"
+            android:src="@drawable/usg_sample" />
 
-        <TextView
-            android:id="@+id/usg_params_x"
+        <Spinner
+            android:id="@+id/usg_methods"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/usg_params_header"
-            android:textColor="#FF777777"
-            android:textStyle="italic"
-            android:text="x" />
+            android:layout_below="@id/usg_photo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:entries="@array/usg_methods"
+            android:prompt="@string/usg_method_prom" />
 
-        <TextView
-            android:id="@+id/usg_params_x_value"
+        <Spinner
+            android:id="@+id/choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/usg_params_x"
-            android:layout_toRightOf="@id/usg_params_x"
-            android:layout_marginLeft="5dp"
-            android:textColor="#FF000000"
-            android:text="100" />
-        
-        <TextView
-            android:id="@+id/usg_params_y"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/usg_params_x"
-            android:textColor="#FF777777"
-            android:textStyle="italic"
-            android:text="y" />
+            android:layout_below="@id/usg_methods"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp" />
 
-        <TextView
-            android:id="@+id/usg_params_y_value"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/basic_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/usg_params_y"
-            android:layout_alignLeft="@id/usg_params_x_value"
-            android:textColor="#FF000000"
-            android:text="43" />
-        
-        <TextView
-            android:id="@+id/usg_params_a"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/usg_params_y"
-            android:textColor="#FF777777"
-            android:textStyle="italic"
-            android:text="a" />
+            android:layout_below="@id/choice" >
 
-        <TextView
-            android:id="@+id/usg_params_a_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/usg_params_a"
-            android:layout_alignLeft="@id/usg_params_x_value"
-            android:textColor="#FF000000"
-            android:text="180" />
-        
-        <TextView
-            android:id="@+id/usg_params_b"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/usg_params_a"
-            android:textColor="#FF777777"
-            android:textStyle="italic"
-            android:text="b" />
+            <TextView
+                android:id="@+id/usg_hc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/choice"
+                android:layout_marginTop="10dp"
+                android:text="HC"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <TextView
-            android:id="@+id/usg_params_b_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/usg_params_b"
-            android:layout_alignLeft="@id/usg_params_x_value"
-            android:textColor="#FF000000"
-            android:text="97" />
-        
-        <TextView
-            android:id="@+id/usg_params_t"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/usg_params_b"
-            android:textColor="#FF777777"
-            android:textStyle="italic"
-            android:text="t" />
+            <TextView
+                android:id="@+id/usg_bpd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/usg_hc"
+                android:layout_marginTop="10dp"
+                android:text="BPD"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <TextView
-            android:id="@+id/usg_params_t_value"
+            <TextView
+                android:id="@+id/usg_scale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/usg_bpd"
+                android:layout_marginTop="10dp"
+                android:text="Scale"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <EditText
+                android:id="@+id/usg_hc_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/usg_hc"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/usg_hc"
+                android:editable="false"
+                android:hint="@string/usg_hc_default"
+                android:inputType="numberDecimal" >
+            </EditText>
+
+            <EditText
+                android:id="@+id/usg_bpd_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/usg_hc_value"
+                android:layout_alignTop="@+id/usg_bpd"
+                android:editable="false"
+                android:hint="@string/usg_bpd_default"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/usg_scale_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/usg_hc_value"
+                android:layout_alignTop="@+id/usg_scale"
+                android:editable="false"
+                android:hint="@string/usg_bpd_default"
+                android:inputType="numberDecimal" />
+
+            <RelativeLayout
+                android:id="@+id/usg_params_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@id/usg_hc"
+                android:background="#FFAAAAAA"
+                android:padding="5dp" >
+
+                <TextView
+                    android:id="@+id/usg_params_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Detail"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/usg_params_x"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/usg_params_header"
+                    android:text="x"
+                    android:textColor="#FF777777"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/usg_params_x_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@id/usg_params_x"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@id/usg_params_x"
+                    android:text="100"
+                    android:textColor="#FF000000" />
+
+                <TextView
+                    android:id="@+id/usg_params_y"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/usg_params_x"
+                    android:text="y"
+                    android:textColor="#FF777777"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/usg_params_y_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/usg_params_x_value"
+                    android:layout_alignTop="@id/usg_params_y"
+                    android:text="43"
+                    android:textColor="#FF000000" />
+
+                <TextView
+                    android:id="@+id/usg_params_a"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/usg_params_y"
+                    android:text="a"
+                    android:textColor="#FF777777"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/usg_params_a_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/usg_params_x_value"
+                    android:layout_alignTop="@id/usg_params_a"
+                    android:text="180"
+                    android:textColor="#FF000000" />
+
+                <TextView
+                    android:id="@+id/usg_params_b"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/usg_params_a"
+                    android:text="b"
+                    android:textColor="#FF777777"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/usg_params_b_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/usg_params_x_value"
+                    android:layout_alignTop="@id/usg_params_b"
+                    android:text="97"
+                    android:textColor="#FF000000" />
+
+                <TextView
+                    android:id="@+id/usg_params_t"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/usg_params_b"
+                    android:text="t"
+                    android:textColor="#FF777777"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/usg_params_t_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/usg_params_x_value"
+                    android:layout_alignTop="@id/usg_params_t"
+                    android:text="4"
+                    android:textColor="#FF000000" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/seekbar_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/usg_params_t"
-            android:layout_alignLeft="@id/usg_params_x_value"
-            android:textColor="#FF000000"
-            android:text="4" />
-        
+            android:layout_below="@id/basic_container"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5dp"
+            android:background="#FFAAAAAA"
+            android:padding="5dp" >
+
+            <TextView
+                android:id="@+id/seek_x_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="5dp"
+                android:text="X"
+                android:textColor="#FF000000" />
+
+            <SeekBar
+                android:id="@+id/seekbar_x"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/seek_x_text"
+                android:layout_toRightOf="@id/seek_x_text" />
+
+            <TextView
+                android:id="@+id/seek_y_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/seek_x_text"
+                android:layout_margin="5dp"
+                android:text="Y"
+                android:textColor="#FF000000" />
+
+            <SeekBar
+                android:id="@+id/seekbar_y"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/seek_y_text"
+                android:layout_toRightOf="@id/seek_y_text" />
+
+            <TextView
+                android:id="@+id/seek_a_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/seek_y_text"
+                android:layout_margin="5dp"
+                android:text="A"
+                android:textColor="#FF000000" />
+
+            <SeekBar
+                android:id="@+id/seekbar_a"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/seek_a_text"
+                android:layout_toRightOf="@id/seek_a_text" />
+
+            <TextView
+                android:id="@+id/seek_b_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/seek_a_text"
+                android:layout_margin="5dp"
+                android:text="B"
+                android:textColor="#FF000000" />
+
+            <SeekBar
+                android:id="@+id/seekbar_b"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/seek_b_text"
+                android:layout_toRightOf="@id/seek_b_text" />
+
+            <TextView
+                android:id="@+id/seek_t_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/seek_b_text"
+                android:layout_margin="5dp"
+                android:text="T"
+                android:textColor="#FF000000" />
+
+            <SeekBar
+                android:id="@+id/seekbar_t"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/seek_t_text"
+                android:layout_toRightOf="@id/seek_t_text" />
+        </RelativeLayout>
     </RelativeLayout>
 
-</RelativeLayout>
+</ScrollView>

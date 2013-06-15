@@ -1,5 +1,6 @@
 package id.fruity.usg;
 
+import id.fruity.usg.database.table.entry.Photo;
 import id.fruity.usg.model.KandunganModel;
 import id.fruity.usg.util.DateUtils;
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,10 +22,12 @@ public class UsgAdapter extends BaseExpandableListAdapter {
 	private ArrayList<KandunganModel> groupItem;
 	private LayoutInflater minflater;
 	private Activity activity;
-	
+	private boolean isDoctor;
 
-	public UsgAdapter(ArrayList<KandunganModel> grList) {
+	public UsgAdapter(ArrayList<KandunganModel> grList, boolean isDoctor) {
 		this.groupItem = grList;
+		this.isDoctor = isDoctor;
+		
 	}
 
 	public void setInflater(LayoutInflater mInflater, Activity act) {
@@ -32,13 +36,14 @@ public class UsgAdapter extends BaseExpandableListAdapter {
 	}
 
 	@Override
-	public Object getChild(int groupPosition, int childPosition) {
-		return null;
+	public Photo getChild(int groupPosition, int childPosition) {
+		return groupItem.get(groupPosition).getFotos().get(childPosition);
 	}
 
 	@Override
 	public long getChildId(int groupPosition, int childPosition) {
-		return 0;
+
+		return childPosition;
 	}
 
 	@Override
@@ -50,20 +55,20 @@ public class UsgAdapter extends BaseExpandableListAdapter {
 		}
 		text = (TextView) convertView.findViewById(R.id.usg_date);
 		text.setText(DateUtils.getStringOfCalendarFromLong(groupItem.get(groupPosition).getFotos().get(childPosition).getCreateTimestampLong()));
-		
-		convertView.setOnClickListener(new PhotoOnClickListener(groupItem.get(groupPosition).getIdPasien(), groupItem.get(groupPosition).getNoKandungan(), groupItem.get(groupPosition).getFotos().get(childPosition).getNoPhoto()));
+//		 convertView.setClickable(true)l
+//		convertView.setLongClickable(true);
 		return convertView;
 	}
 
 	@Override
 	public int getChildrenCount(int groupPosition) {
-		if(groupItem.size()< 1) return 0;
+		if(groupItem.size() == 0) return 0;
 		return groupItem.get(groupPosition).getFotos().size();
 	}
 
 	@Override
-	public Object getGroup(int groupPosition) {
-		return null;
+	public KandunganModel getGroup(int groupPosition) {
+		return groupItem.get(groupPosition);
 	}
 
 	@Override
@@ -83,7 +88,7 @@ public class UsgAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public long getGroupId(int groupPosition) {
-		return 0;
+		return groupPosition;
 	}
 
 	@Override
@@ -94,6 +99,7 @@ public class UsgAdapter extends BaseExpandableListAdapter {
 		}
 		TextView groupTitle = (TextView) convertView.findViewById(R.id.group_title);
 		groupTitle.setText("Kandungan "+groupItem.get(groupPosition).getNoKandungan()+"");
+
 		return convertView;
 	}
 
@@ -107,30 +113,6 @@ public class UsgAdapter extends BaseExpandableListAdapter {
 		return true;
 	}
 
-	private class PhotoOnClickListener implements OnClickListener{
-		private String patientId;
-		private int kandunganId;
-		private int photoId;
-		
-		public PhotoOnClickListener(String patientId, int kandunganId, int photoId) {
-			super();
-			this.patientId = patientId;
-			this.kandunganId = kandunganId;
-			this.photoId = photoId;
-		}
+	
 
-		@Override
-		public void onClick(View v) {
-			Intent i = new Intent(activity, UsgActivity.class);
-			Bundle b = new Bundle();
-			b.putString("patientId", patientId);
-			b.putInt("kandunganId", kandunganId);
-			b.putInt("photoId", photoId);
-			
-			i.putExtras(b);
-			activity.startActivity(i);
-		}
-		
-		
-	};
 }

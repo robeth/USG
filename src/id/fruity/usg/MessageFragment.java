@@ -1,8 +1,9 @@
 package id.fruity.usg;
 
 import id.fruity.usg.database.USGDBHelper;
-import id.fruity.usg.database.table.CommentTable;
+import id.fruity.usg.database.converter.PatientConverter;
 import id.fruity.usg.database.table.entry.Comment;
+import id.fruity.usg.database.table.entry.Patient;
 import id.fruity.usg.model.KomentarModel;
 import id.fruity.usg.util.DateUtils;
 
@@ -29,6 +30,7 @@ public class MessageFragment extends SherlockFragment {
 	private USGDBHelper helper;
 	private String patientId;
 	private String petugasId;
+	private Patient p;
 	private ArrayList<KomentarModel> kms;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,8 +40,9 @@ public class MessageFragment extends SherlockFragment {
         petugasId = b.getString("userId");
         Log.d("Message Fragment", "Patient ID:"+patientId+" - PetugasId:"+petugasId);
         
-        helper = new USGDBHelper(getActivity());
+        helper = USGDBHelper.getInstance(getActivity());
         helper.open();
+        p = PatientConverter.convert(helper.getPasien(patientId));
         KomentarModel k = new KomentarModel();
         kms = k.getItems(helper.getKomentarOf(patientId));
         Log.d("Message Fragment", "Komentar size:"+kms.size());
@@ -62,7 +65,11 @@ public class MessageFragment extends SherlockFragment {
         
         messages = new ArrayList<Message>();
         for(int i = 0; i < kms.size();i++){
-        	messages.add(new Message(kms.get(i).getContent(), DateUtils.getStringOfCalendarFromLong(kms.get(i).getSentDate()), kms.get(i).getDoctorName(), R.drawable.doctor_icon, !kms.get(i).isFromDokter()));
+        	if(kms.get(i).isFromDokter()){
+        		messages.add(new Message(kms.get(i).getContent(), DateUtils.getStringOfCalendarFromLong(kms.get(i).getSentDate()), kms.get(i).getDoctorName(), R.drawable.doctor_icon, !kms.get(i).isFromDokter()));
+        	} else {
+        		messages.add(new Message(kms.get(i).getContent(), DateUtils.getStringOfCalendarFromLong(kms.get(i).getSentDate()), p.getName(), R.drawable.mother_icon, !kms.get(i).isFromDokter()));
+        	}
         }
 //        messages.add(new Message("Hai Pasien. Bagaimana Kabar?", "1 Januari 2013 7.40 am", "dr. Rapier", R.drawable.doctor_icon, false));
 //        messages.add(new Message("Akika baik, dok", "2 Januari 2013 10.40 am", "Pasien 1", R.drawable.mother_icon, true));

@@ -1,12 +1,15 @@
 package id.fruity.usg.database.table.entry;
 
+import java.util.Comparator;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import id.fruity.usg.database.table.PhotoTable;
+import id.fruity.usg.database.table.UserTable;
 import android.content.ContentValues;
 
-public class Photo extends USGTableEntry {
+public class Photo extends USGTableEntry implements Comparator<Photo> {
 	@Expose
 	@SerializedName("local_photo_number")
 	private int noPhoto;
@@ -58,12 +61,18 @@ public class Photo extends USGTableEntry {
 	@Expose
 	@SerializedName("officer_ktp")
 	private String serverId4;
+	@Expose
+	@SerializedName("local_photo_timestamp")
+	private long photoTimestamp;
+	@Expose
+	@SerializedName("photo_timestamp")
+	private long serverPhotoTimestamp;
 	
 	public Photo(int serverId, boolean isDirty, boolean isActive,
 			long modifyDate, long createDate, int noPhoto, long sDate, String filename,
 			float x, float y, float a, float b, float theta, float scale, String method,
 			String idPasien, int noKandungan, String idPetugas, String serverId2,
-			int serverId3, String serverId4) {
+			int serverId3, String serverId4, long photoTimestamp, long serverPhotoTimestamp) {
 		super(isDirty, isActive, modifyDate, createDate);
 		this.noPhoto = noPhoto;
 		this.autoDateLong = sDate;
@@ -82,6 +91,8 @@ public class Photo extends USGTableEntry {
 		this.serverId2 = serverId2;
 		this.serverId3 = serverId3;
 		this.serverId4 = serverId4;
+		this.photoTimestamp = photoTimestamp;
+		this.serverPhotoTimestamp = serverPhotoTimestamp;
 	}
 	@Override
 	public ContentValues getContentValues() {
@@ -102,6 +113,8 @@ public class Photo extends USGTableEntry {
 		cv.put(PhotoTable.C_SERVER_ID2_PASIEN, serverId2);
 		cv.put(PhotoTable.C_SERVER_ID3_KANDUNGAN, serverId3);
 		cv.put(PhotoTable.C_SERVER_ID4_OFFICER, serverId4);
+		cv.put(UserTable.C_PHOTOTIMESTAMP, photoTimestamp);
+		cv.put(UserTable.C_SERVERPHOTOTIMESTAMP, serverPhotoTimestamp);
 		
 		cv.put(PhotoTable.C_DIRTY, isDirty()?1:0);
 		cv.put(PhotoTable.C_ISACTIVE, isActive()?1:0);
@@ -186,10 +199,22 @@ public class Photo extends USGTableEntry {
 	public void setScale(float scale) {
 		this.scale = scale;
 	}
+	
+	public long getPhotoTimestamp() {
+		return photoTimestamp;
+	}
+	public void setPhotoTimestamp(long photoTimestamp) {
+		this.photoTimestamp = photoTimestamp;
+	}
+
+	public long getServerPhotoTimestamp() {
+		return serverPhotoTimestamp;
+	}
 	@Override
 	public String[] getPrimaryArgs() {
 		return new String[]{""+noPhoto,""+idPasien, ""+noKandungan};
 	}
+	
 	@Override
 	public String toString() {
 		return "Photo [noPhoto=" + noPhoto + ", autoDateLong=" + autoDateLong
@@ -198,11 +223,10 @@ public class Photo extends USGTableEntry {
 				+ ", method=" + method + ", idPasien=" + idPasien
 				+ ", noKandungan=" + noKandungan + ", idPetugas=" + idPetugas
 				+ ", serverId=" + serverId + ", serverId2=" + serverId2
-				+ ", serverId3=" + serverId3 + ", serverId4=" + serverId4 + "]";
+				+ ", serverId3=" + serverId3 + ", serverId4=" + serverId4
+				+ ", photoTimestamp=" + photoTimestamp
+				+ ", serverPhotoTimestamp=" + serverPhotoTimestamp + "]";
 	}
-	
-	
-	
 	public String getIdPasien() {
 		return idPasien;
 	}
@@ -237,8 +261,16 @@ public class Photo extends USGTableEntry {
 		this.theta = other.getTheta();
 		this.scale = other.getScale();
 		this.method = other.getMethod();
+		this.serverPhotoTimestamp = other.getPhotoTimestamp();
 		setDirty(false);
 		setActive(other.isActive());
 		setModifyTimestampLong(other.getModifyTimestampLong());
+	}
+	@Override
+	public int compare(Photo lhs, Photo rhs) {
+		if(lhs.getCreateTimestampLong() < rhs.getCreateTimestampLong()){
+			return -1;
+		}
+		return 1;
 	}
 }

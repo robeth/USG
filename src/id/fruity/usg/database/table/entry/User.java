@@ -32,6 +32,12 @@ public class User extends USGTableEntry {
 	@SerializedName("description")
 	private String description;
 	@Expose
+	@SerializedName("local_photo_timestamp")
+	private long photoTimestamp;
+	@Expose
+	@SerializedName("photo_timestamp")
+	private long serverPhotoTimestamp;
+	@Expose
 	@SerializedName("ktp")
 	private String serverId;
 	
@@ -40,7 +46,7 @@ public class User extends USGTableEntry {
 	public User(String serverId, boolean isDirty, boolean isActive,
 			long modifyDate, long createDate, String idUser, String username,
 			String password, String name, String address, String email, String phone,
-			String description) {
+			String description, long photoTimestamp, long serverPhotoTimestamp) {
 		super(isDirty, isActive, modifyDate, createDate);
 		this.idUser = idUser;
 		this.username = username;
@@ -51,6 +57,8 @@ public class User extends USGTableEntry {
 		this.phone = phone;
 		this.description = description;
 		this.serverId = serverId;
+		this.photoTimestamp = photoTimestamp;
+		this.serverPhotoTimestamp = serverPhotoTimestamp;
 	}
 	@Override
 	public ContentValues getContentValues() {
@@ -63,6 +71,8 @@ public class User extends USGTableEntry {
 		cv.put(UserTable.C_EMAIL, email);
 		cv.put(UserTable.C_PHONE, phone);
 		cv.put(UserTable.C_DESCRIPTION, description);
+		cv.put(UserTable.C_PHOTOTIMESTAMP, photoTimestamp);
+		cv.put(UserTable.C_SERVERPHOTOTIMESTAMP, serverPhotoTimestamp);
 		
 		cv.put(UserTable.C_DIRTY, isDirty()?1:0);
 		cv.put(UserTable.C_ISACTIVE, isActive()?1:0);
@@ -72,6 +82,16 @@ public class User extends USGTableEntry {
 		return cv;
 	}
 	
+	
+	
+	public String getIdUser() {
+		return idUser;
+	}
+
+	public void setIdUser(String idUser) {
+		this.idUser = idUser;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -120,16 +140,32 @@ public class User extends USGTableEntry {
 		return new String[]{""+idUser};
 	}
 	
+	public long getPhotoTimestamp() {
+		return photoTimestamp;
+	}
+
+	public void setPhotoTimestamp(long photoTimestamp) {
+		this.photoTimestamp = photoTimestamp;
+	}
+
+	public long getServerPhotoTimestamp() {
+		return serverPhotoTimestamp;
+	}
+
+	public void setServerPhotoTimestamp(long serverPhotoTimestamp) {
+		this.serverPhotoTimestamp = serverPhotoTimestamp;
+	}
 
 	@Override
 	public String toString() {
 		return "User [idUser=" + idUser + ", username=" + username
 				+ ", password=" + password + ", name=" + name + ", address="
 				+ address + ", email=" + email + ", phone=" + phone
-				+ ", description=" + description + ", serverId=" + serverId
-				+ "]";
+				+ ", description=" + description + ", photoTimestamp="
+				+ photoTimestamp + ", serverPhotoTimestamp="
+				+ serverPhotoTimestamp + ", serverId=" + serverId + "]";
 	}
-	
+
 	public void onServerAdd(){
 		idUser = serverId;
 		setDirty(false);
@@ -148,6 +184,7 @@ public class User extends USGTableEntry {
 		this.email = other.getEmail();
 		this.phone = other.getPhone();
 		this.description = other.getDescription();
+		this.serverPhotoTimestamp = other.getPhotoTimestamp();
 		setDirty(false);
 		setActive(other.isActive());
 		setModifyTimestampLong(other.getModifyTimestampLong());

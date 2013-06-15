@@ -1,5 +1,9 @@
 package id.fruity.usg;
 
+import id.fruity.usg.database.USGDBHelper;
+import id.fruity.usg.database.table.entry.Photo;
+import id.fruity.usg.util.DateUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -15,6 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.SyncStateContract.Helpers;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -39,6 +44,8 @@ public class PatientActivity extends SherlockFragmentActivity implements
 	private Bundle bundle;
 	private String patientId;
 	private String userId;
+	private boolean isDoctor;
+	private USGDBHelper helper;
 
 	// Get USG Image Properties
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -54,11 +61,12 @@ public class PatientActivity extends SherlockFragmentActivity implements
 		Bundle b = getIntent().getExtras();
 		patientId = b.getString("patientId");
 		userId = b.getString("userId");
-
+		isDoctor = b.getBoolean("isDoctor");
+		helper = USGDBHelper.getInstance(this);
 		bundle = new Bundle();
 		bundle.putString("patientId", patientId);
 		bundle.putString("userId", userId);
-
+		bundle.putBoolean("isDoctor", isDoctor);
 		setContentView(R.layout.patient);
 		fragmentId = R.id.content;
 
@@ -132,10 +140,10 @@ public class PatientActivity extends SherlockFragmentActivity implements
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if (currentFragmentIndex == PROFILE_MODE) {
+		if (currentFragmentIndex == PROFILE_MODE && !isDoctor) {
 			menu.add("Edit Profile").setIcon(R.drawable.content_edit)
 					.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		} else if (currentFragmentIndex == USG_MODE) {
+		} else if (currentFragmentIndex == USG_MODE && !isDoctor) {
 			menu.add("Add USG").setIcon(R.drawable.content_new_picture)
 					.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 			menu.add("Add Kandungan").setIcon(R.drawable.content_read)
@@ -212,7 +220,8 @@ public class PatientActivity extends SherlockFragmentActivity implements
 			Toast.makeText(PatientActivity.this, "OnDestroyActionMode",
 					Toast.LENGTH_SHORT).show();
 			if (currentFragment instanceof PatientProfileFragment) {
-				((PatientProfileFragment) currentFragment).setEditable(false);
+				((PatientProfileFragment) currentFragment).notifyHasEditted();
+				
 			}
 		}
 
@@ -233,8 +242,12 @@ public class PatientActivity extends SherlockFragmentActivity implements
 		startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 	}
 
-	public void sendImageRequestDummy() {
+	public void sendImageRequestDummy(String patientId, int pregnancyId) {
 		Intent intent = new Intent(this, AddPhotoActivity.class);
+		Bundle b = new Bundle();
+		b.putString("patientId", patientId);
+		b.putInt("pregnancyId", pregnancyId);
+		intent.putExtras(b);
 		startActivityForResult(intent, CHOOSE_IMAGE_ACTIVITY_REQUEST_CODE);
 	}
 
@@ -257,18 +270,22 @@ public class PatientActivity extends SherlockFragmentActivity implements
 				Bundle resB = data.getExtras();
 				int imageId = resB.getInt("imageId");
 				int imageIdRes = resB.getInt("imageIdRes");
-
+				String iPatientId = resB.getString("patientId");
+				int iPregnancyId = resB.getInt("pregnancyId");
 				Toast.makeText(this, "Image chosen:" + imageId,
 						Toast.LENGTH_SHORT).show();
 				
 				boolean isSdPresent = android.os.Environment.getExternalStorageState().equals(
 				        android.os.Environment.MEDIA_MOUNTED);
+				String filename = "-1";
 				if (isSdPresent) {
-					String filename = Environment.getExternalStorageDirectory().getAbsolutePath() +
+					filename = Environment.getExternalStorageDirectory().getAbsolutePath() +
 							"USG Apps" + File.separator + "USG";
 					File f = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 					saveToSdCard(f.getAbsolutePath(), imageIdRes);
+					
 				}
+				((PatientUSGFragment) currentFragment).notifyImageCaptured(filename);
 			}
 		}
 	}

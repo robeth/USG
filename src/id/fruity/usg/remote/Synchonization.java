@@ -32,11 +32,14 @@ import android.app.Activity;
 public class Synchonization {
 	public static Activity A;
 	private static USGDBHelper helper;
-	
-	public static ArrayList<User> getNewUser(long lastSync) {
+	private static USGDBHelper getDBHelper(){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = USGDBHelper.getInstance(A);
 		}
+		return helper;
+	}
+	public static ArrayList<User> getNewUser(long lastSync) {
+		helper = getDBHelper();
 		helper.open();
 		ArrayList<User> users = UserConverter.convertAll(helper.getNewUser(lastSync));
 		helper.close();
@@ -45,7 +48,7 @@ public class Synchonization {
 	
 	public static ArrayList<Patient> getNewPatient(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Patient> users = PatientConverter.convertAll(helper.getNewPatient(lastSync));
@@ -55,7 +58,7 @@ public class Synchonization {
 	
 	public static ArrayList<Doctor> getNewDoctor(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Doctor> users = DoctorConverter.convertAll(helper.getNewDoctor(lastSync));
@@ -65,7 +68,7 @@ public class Synchonization {
 	
 	public static ArrayList<Officer> getNewOfficer(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Officer> users = OfficerConverter.convertAll(helper.getNewOfficer(lastSync));
@@ -75,7 +78,7 @@ public class Synchonization {
 	
 	public static ArrayList<Clinic> getNewClinic(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Clinic> users = ClinicConverter.convertAll(helper.getNewClinic(lastSync));
@@ -85,7 +88,7 @@ public class Synchonization {
 	
 	public static ArrayList<Pregnancy> getNewPregnancy(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Pregnancy> users = PregnancyConverter.convertAll(helper.getNewPregnancy(lastSync));
@@ -95,7 +98,7 @@ public class Synchonization {
 	
 	public static ArrayList<Photo> getNewPhoto(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Photo> users = PhotoConverter.convertAll(helper.getNewPhoto(lastSync));
@@ -105,7 +108,7 @@ public class Synchonization {
 	
 	public static ArrayList<Serve> getNewServe(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Serve> users = ServeConverter.convertAll(helper.getNewServe(lastSync));
@@ -115,7 +118,7 @@ public class Synchonization {
 	
 	public static ArrayList<WorksOn> getNewWorksOn(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<WorksOn> users = WorksOnConverter.convertAll(helper.getNewWorksOn(lastSync));
@@ -125,7 +128,7 @@ public class Synchonization {
 	
 	public static ArrayList<Validation> getNewValidation(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Validation> users = ValidationConverter.convertAll(helper.getNewValidation(lastSync));
@@ -135,7 +138,7 @@ public class Synchonization {
 	
 	public static ArrayList<Comment> getNewComment(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Comment> users = CommentConverter.convertAll(helper.getNewComment(lastSync));
@@ -145,7 +148,7 @@ public class Synchonization {
 	
 	public static ArrayList<User> getUpdateUser(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<User> users = UserConverter.convertAll(helper.getUpdateUser(lastSync));
@@ -155,7 +158,7 @@ public class Synchonization {
 	
 	public static ArrayList<Patient> getUpdatePatient(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Patient> users = PatientConverter.convertAll(helper.getUpdatePatient(lastSync));
@@ -165,7 +168,7 @@ public class Synchonization {
 	
 	public static ArrayList<Doctor> getUpdateDoctor(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Doctor> users = DoctorConverter.convertAll(helper.getUpdateDoctor(lastSync));
@@ -175,7 +178,7 @@ public class Synchonization {
 	
 	public static ArrayList<Officer> getUpdateOfficer(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Officer> users = OfficerConverter.convertAll(helper.getUpdateOfficer(lastSync));
@@ -185,7 +188,7 @@ public class Synchonization {
 	
 	public static ArrayList<Clinic> getUpdateClinic(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Clinic> users = ClinicConverter.convertAll(helper.getUpdateClinic(lastSync));
@@ -195,7 +198,7 @@ public class Synchonization {
 	
 	public static ArrayList<Pregnancy> getUpdatePregnancy(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Pregnancy> users = PregnancyConverter.convertAll(helper.getUpdatePregnancy(lastSync));
@@ -205,7 +208,7 @@ public class Synchonization {
 	
 	public static ArrayList<Photo> getUpdatePhoto(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Photo> users = PhotoConverter.convertAll(helper.getUpdatePhoto(lastSync));
@@ -215,7 +218,7 @@ public class Synchonization {
 	
 	public static ArrayList<Serve> getUpdateServe(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Serve> users = ServeConverter.convertAll(helper.getUpdateServe(lastSync));
@@ -225,7 +228,7 @@ public class Synchonization {
 	
 	public static ArrayList<WorksOn> getUpdateWorksOn(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<WorksOn> users = WorksOnConverter.convertAll(helper.getUpdateWorksOn(lastSync));
@@ -235,7 +238,7 @@ public class Synchonization {
 	
 	public static ArrayList<Validation> getUpdateValidation(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Validation> users = ValidationConverter.convertAll(helper.getUpdateValidation(lastSync));
@@ -245,7 +248,7 @@ public class Synchonization {
 	
 	public static ArrayList<Comment> getUpdateComment(long lastSync) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		ArrayList<Comment> users = CommentConverter.convertAll(helper.getUpdateComment(lastSync));
@@ -256,7 +259,7 @@ public class Synchonization {
 	
 	public static void updateUserEntriesFromServer(User[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -271,7 +274,7 @@ public class Synchonization {
 	
 	public static void updateClinicEntriesFromServer(Clinic[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -286,7 +289,7 @@ public class Synchonization {
 	
 	public static void updateOfficerEntriesFromServer(Officer[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -301,7 +304,7 @@ public class Synchonization {
 	
 	public static void updateDoctorEntriesFromServer(Doctor[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -316,7 +319,7 @@ public class Synchonization {
 	
 	public static void updatePatientEntriesFromServer(Patient[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -331,7 +334,7 @@ public class Synchonization {
 	
 	public static void updatePregnancyEntriesFromServer(Pregnancy[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -346,7 +349,7 @@ public class Synchonization {
 	
 	public static void updatePhotoEntriesFromServer(Photo[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -361,7 +364,7 @@ public class Synchonization {
 	
 	public static void updateServeEntriesFromServer(Serve[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -376,7 +379,7 @@ public class Synchonization {
 	
 	public static void updateWorksOnEntriesFromServer(WorksOn[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -391,7 +394,7 @@ public class Synchonization {
 	
 	public static void updateCommentEntriesFromServer(Comment[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -406,7 +409,7 @@ public class Synchonization {
 	
 	public static void updateValidationEntriesFromServer(Validation[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -421,7 +424,7 @@ public class Synchonization {
 	
 	public static void addUserEntriesFromServer(User[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -433,7 +436,7 @@ public class Synchonization {
 	
 	public static void addClinicEntriesFromServer(Clinic[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -445,7 +448,7 @@ public class Synchonization {
 	
 	public static void addOfficerEntriesFromServer(Officer[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -457,7 +460,7 @@ public class Synchonization {
 	
 	public static void addDoctorEntriesFromServer(Doctor[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -469,7 +472,7 @@ public class Synchonization {
 	
 	public static void addPatientEntriesFromServer(Patient[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -481,7 +484,7 @@ public class Synchonization {
 	
 	public static void addPregnancyEntriesFromServer(Pregnancy[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -493,7 +496,7 @@ public class Synchonization {
 	
 	public static void addPhotoEntriesFromServer(Photo[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -506,7 +509,7 @@ public class Synchonization {
 	
 	public static void addServeEntriesFromServer(Serve[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -518,7 +521,7 @@ public class Synchonization {
 	
 	public static void addWorksOnEntriesFromServer(WorksOn[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -530,7 +533,7 @@ public class Synchonization {
 	
 	public static void addCommentEntriesFromServer(Comment[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -543,7 +546,7 @@ public class Synchonization {
 	
 	public static void addValidationEntriesFromServer(Validation[] entries){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
@@ -556,7 +559,7 @@ public class Synchonization {
 	
 	public static <T extends USGTableEntry> void onNewEntriesSent(ArrayList<T> entries) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(T e : entries){
@@ -589,7 +592,7 @@ public class Synchonization {
 	
 	public static <T extends USGTableEntry> void onUpdateEntriesSent(ArrayList<T> entries) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		for(T e : entries){
@@ -622,7 +625,7 @@ public class Synchonization {
 	
 	public static void updatePhotoServerId(String ktp, int pregnancyNumber, int localPhotoNumber, int serverPhotoNumber){
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		Photo p = PhotoConverter.convert(helper.getPhoto(ktp, pregnancyNumber, localPhotoNumber));
@@ -636,7 +639,7 @@ public class Synchonization {
 	public static void updateCommentServerId(String ktp,
 			int localCommentNumber, int serverCommentNumber) {
 		if(helper == null){
-			helper = new USGDBHelper(A);
+			helper = getDBHelper();
 		}
 		helper.open();
 		Comment c = CommentConverter.convert(helper.getComment(ktp, localCommentNumber));

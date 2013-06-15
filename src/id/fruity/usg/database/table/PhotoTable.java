@@ -23,6 +23,8 @@ public class PhotoTable extends USGTable<Photo> {
 			C_SERVER_ID2_PASIEN = "id_server2_patient",
 			C_SERVER_ID3_KANDUNGAN = "id_server3_pregnancy",
 			C_SERVER_ID4_OFFICER = "id_server4_officer",
+			C_PHOTOTIMESTAMP = "photo_timestamp",
+			C_SERVERPHOTOTIMESTAMP = "server_photo_timestamp",
 			CREATE_STATEMENT = "create table " + TABLE_NAME + " ( "
 					+ C_ID+ " integer not null, "
 					+ C_ID_PASIEN + " integer not null, "
@@ -45,6 +47,8 @@ public class PhotoTable extends USGTable<Photo> {
 					+ C_SERVER_ID2_PASIEN + " text, "
 					+ C_SERVER_ID3_KANDUNGAN + " integer, "
 					+ C_SERVER_ID4_OFFICER + " text, "
+					+ C_PHOTOTIMESTAMP + " integer, "
+					+ C_SERVERPHOTOTIMESTAMP + " integer, "
 					+ "primary key (" + C_ID + ", "+ C_ID_PASIEN + ", " + C_ID_KANDUNGAN + "), " 
 					+ "foreign key (" + C_ID_PASIEN + ", " + C_ID_KANDUNGAN + ") references "
 					+ PregnancyTable.TABLE_NAME+ " ( " + PregnancyTable.C_ID + ", " 
@@ -70,7 +74,9 @@ public class PhotoTable extends USGTable<Photo> {
 		C_SERVER_ID,
 		C_SERVER_ID2_PASIEN,
 		C_SERVER_ID3_KANDUNGAN,
-		C_SERVER_ID4_OFFICER
+		C_SERVER_ID4_OFFICER,
+		C_PHOTOTIMESTAMP,
+		C_SERVERPHOTOTIMESTAMP
 	};
 	private static final String PRIMARY_CLAUSE = C_ID+"=? AND "+C_ID_PASIEN+"=? AND " + C_ID_KANDUNGAN+"=?";
 	private static final String NEW_CLAUSE = C_ISACTIVE+"=1 AND ("+C_SERVER_ID+"=? OR "+C_SERVER_ID2_PASIEN

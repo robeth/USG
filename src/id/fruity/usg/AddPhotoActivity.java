@@ -14,12 +14,19 @@ import com.actionbarsherlock.app.SherlockActivity;
 public class AddPhotoActivity extends SherlockActivity {
 	private ImageView i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13,
 			i14, i15;
-
+	private String patientId;
+	private int pregnancyId;
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.chose_photo);
+		Bundle b = getIntent().getExtras();
+		patientId = b.getString("patientId");
+		pregnancyId = b.getInt("pregnancyId");
+		
 		i1 = (ImageView) findViewById(R.id.usg_sample1);
 		i2 = (ImageView) findViewById(R.id.usg_sample2);
 		i3 = (ImageView) findViewById(R.id.usg_sample3);
@@ -139,6 +146,8 @@ public class AddPhotoActivity extends SherlockActivity {
 						Bundle b = new Bundle();
 						b.putInt("imageId", imageId);
 						b.putInt("imageIdRes", getResId(imageId));
+						b.putString("patientId", patientId);
+						b.putInt("pregnancyId", pregnancyId);
 						i.putExtras(b);
 						setResult(RESULT_OK, i);
 						AddPhotoActivity.this.finish();

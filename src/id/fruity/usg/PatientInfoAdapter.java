@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -21,14 +22,16 @@ public class PatientInfoAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private Activity activity;
 	private String userId;
+	private PatientInfoAdapterInterface adapterInterface;
 
 	public PatientInfoAdapter(ArrayList<PatientInfo> infos,
-			LayoutInflater inflater, Activity activity, String userId) {
+			LayoutInflater inflater, Activity activity, String userId, PatientInfoAdapterInterface adapterInterface) {
 		super();
 		this.infos = infos;
 		this.inflater = inflater;
 		this.activity = activity;
 		this.userId = userId;
+		this.adapterInterface = adapterInterface;
 	}
 
 	@Override
@@ -72,6 +75,7 @@ public class PatientInfoAdapter extends BaseAdapter {
 		lastUpdate.setText(item.getLastCheck());
 		patientPhoto.setImageResource(item.getPhotoId());
 		convertView.setOnClickListener(new PatientClickListener(item.getPatientId()));
+		convertView.setOnLongClickListener(new PatientLongClickListener(item.getPatientId(), item.getName()));
 		return convertView;
 	}
 	
@@ -84,15 +88,34 @@ public class PatientInfoAdapter extends BaseAdapter {
 		
 		@Override
 		public void onClick(View v) {
-			Intent i = new Intent(activity, PatientActivity.class);
-			Bundle b = new Bundle();
-			b.putString("patientId", patientId);
-			b.putString("userId", userId);
-			
-			
-			i.putExtras(b);
-			activity.startActivity(i);
+			if(adapterInterface != null){
+				adapterInterface.onClick(patientId,userId);
+				return;
+			}
 		}
-	}; 
+	};
+	
+	private class PatientLongClickListener implements OnLongClickListener {
+		private String patientId;
+		private String patientName;
+		
+		public PatientLongClickListener(String patientId, String patientName){
+			this.patientId = patientId;
+			this.patientName = patientName;
+		}
+
+		@Override
+		public boolean onLongClick(View v) {
+			if(adapterInterface != null){
+				adapterInterface.onLongPress(patientId, patientName);
+			}
+			return true;
+		}
+	};
+	
+	public static abstract class PatientInfoAdapterInterface{
+		public abstract void onClick(String patientId, String userId);
+		public abstract void onLongPress(String patientId, String patientName);
+	}
 
 }

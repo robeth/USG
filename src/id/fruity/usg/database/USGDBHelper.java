@@ -23,6 +23,7 @@ import id.fruity.usg.database.table.entry.Clinic;
 import id.fruity.usg.database.table.entry.Photo;
 import id.fruity.usg.database.table.entry.User;
 import id.fruity.usg.database.table.entry.Validation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -48,9 +49,10 @@ public class USGDBHelper extends SQLiteOpenHelper {
 	private ServeTable melayaniTable;
 	private CommentTable komentarTable;
 	private ValidationTable validasiTable;
+	private static USGDBHelper instance;
 	
 	
-	public USGDBHelper(Context context) {
+	private USGDBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		userTable = new UserTable();
 		puskesmasTable = new ClinicTable();
@@ -63,6 +65,13 @@ public class USGDBHelper extends SQLiteOpenHelper {
 		melayaniTable = new ServeTable();
 		komentarTable = new CommentTable();
 		validasiTable = new ValidationTable();
+	}
+	
+	public static USGDBHelper getInstance(Context context){
+		if(instance == null){
+			instance = new USGDBHelper(context);
+		}
+		return instance;
 	}
 
 	public void onCreate(SQLiteDatabase database) {
@@ -108,16 +117,16 @@ public class USGDBHelper extends SQLiteOpenHelper {
 	
 	public void test(){
 		//Insert table user
-		User  u1 = new User("-1", true,true,82233213123L,82233213123L,"ktp1","user1","passuser1","User 1","Address 1","user1@gmail.com","+6285655228693","This is User1");
-		User  u2 = new User("-1", true,true,82233213123L,82233213123L,"ktp2","user2","passuser2","User 2","Address 2","user2@gmail.com","+6285655228693","This is User2");
-		User  u3 = new User("-1", true,true,82233213123L,82233213123L,"ktp3","user3","passuser3","User 3","Address 3","user3@gmail.com","+6285655228693","This is User3");
-		User  u4 = new User("-1", true,true,82233213123L,82233213123L,"ktp4","user4","passuser4","User 4","Address 4","user4@gmail.com","+6285655228693","This is User4");
-		User  u5 = new User("-1", true,true,82233213123L,82233213123L,"ktp5","user5","passuser5","User 5","Address 5","user5@gmail.com","+6285655228693","This is User5");
-		User  u6 = new User("-1", true,true,82233213123L,82233213123L,"ktp6","user6","passuser6","User 6","Address 6","user6@gmail.com","+6285655228693","This is User6");
-		User  u7 = new User("-1", true,true,82233213123L,82233213123L,"ktp7","user7","passuser7","User 7","Address 7","user7@gmail.com","+6285655228693","This is User7");
-		User  u8 = new User("-1", true,true,82233213123L,82233213123L,"ktp8","user8","passuser8","User 8","Address 8","user8@gmail.com","+6285655228693","This is User8");
-		User  u9 = new User("-1", true,true,82233213123L,82233213123L,"ktp9","user9","passuser9","User 9","Address 9","user9@gmail.com","+6285655228693","This is User9");
-		User  u10 = new User("-1", true,true,82233213123L,82233213123L,"ktp10","user10","passuser10","User 10","Address 10","user10@gmail.com","+6285655228693","This is User10");
+		User  u1 = new User("-1", true,true,82233213123L,82233213123L,"ktp1","user1","passuser1","User 1","Address 1","user1@gmail.com","+6285655228693","This is User1", -1, -1);
+		User  u2 = new User("-1", true,true,82233213123L,82233213123L,"ktp2","user2","passuser2","User 2","Address 2","user2@gmail.com","+6285655228693","This is User2", -1, -1);
+		User  u3 = new User("-1", true,true,82233213123L,82233213123L,"ktp3","user3","passuser3","User 3","Address 3","user3@gmail.com","+6285655228693","This is User3", -1, -1);
+		User  u4 = new User("-1", true,true,82233213123L,82233213123L,"ktp4","user4","passuser4","User 4","Address 4","user4@gmail.com","+6285655228693","This is User4", -1, -1);
+		User  u5 = new User("-1", true,true,82233213123L,82233213123L,"ktp5","user5","passuser5","User 5","Address 5","user5@gmail.com","+6285655228693","This is User5", -1, -1);
+		User  u6 = new User("-1", true,true,82233213123L,82233213123L,"ktp6","user6","passuser6","User 6","Address 6","user6@gmail.com","+6285655228693","This is User6", -1, -1);
+		User  u7 = new User("-1", true,true,82233213123L,82233213123L,"ktp7","user7","passuser7","User 7","Address 7","user7@gmail.com","+6285655228693","This is User7", -1, -1);
+		User  u8 = new User("-1", true,true,82233213123L,82233213123L,"ktp8","user8","passuser8","User 8","Address 8","user8@gmail.com","+6285655228693","This is User8", -1, -1);
+		User  u9 = new User("-1", true,true,82233213123L,82233213123L,"ktp9","user9","passuser9","User 9","Address 9","user9@gmail.com","+6285655228693","This is User9", -1, -1);
+		User  u10 = new User("-1", true,true,82233213123L,82233213123L,"ktp10","user10","passuser10","User 10","Address 10","user10@gmail.com","+6285655228693","This is User10", -1, -1);
 		userTable.insert(database, u1);
 		userTable.insert(database, u2);
 		userTable.insert(database, u3);
@@ -195,26 +204,26 @@ public class USGDBHelper extends SQLiteOpenHelper {
 		kandunganTable.insert(database, k9);
 		kandunganTable.insert(database, k10);
 		
-		Photo f1 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 1 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp101", 1, "ktp6", "-1", -1, "-1");
-		Photo f2 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 1 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp101", 1, "ktp6", "-1", -1, "-1");
-		Photo f3 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 1 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp101", 2, "ktp6", "-1", -1, "-1");
-		Photo f4 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 1 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp101", 2, "ktp6", "-1", -1, "-1");
-		Photo f5 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 2 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp102", 1, "ktp7", "-1", -1, "-1");
-		Photo f6 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 2 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp102", 1, "ktp7", "-1", -1, "-1");
-		Photo f7 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 2 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp102", 2, "ktp7", "-1", -1, "-1");
-		Photo f8 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 2 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp102", 2, "ktp7", "-1", -1, "-1");
-		Photo f9 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 3 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp103", 1, "ktp8", "-1", -1, "-1");
-		Photo f10 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 3 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp103", 1, "ktp8", "-1", -1, "-1");
-		Photo f11 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 3 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp103", 2, "ktp8", "-1", -1, "-1");
-		Photo f12 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 3 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp103", 2, "ktp8", "-1", -1, "-1");
-		Photo f13 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 4 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp104", 1, "ktp9", "-1", -1, "-1");
-		Photo f14 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 4 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp104", 1, "ktp9", "-1", -1, "-1");
-		Photo f15 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 4 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp104", 2, "ktp9", "-1", -1, "-1");
-		Photo f16 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 4 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp104", 2, "ktp9", "-1", -1, "-1");
-		Photo f17 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 5 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp105", 1, "ktp10", "-1", -1, "-1");
-		Photo f18 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 5 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp105", 1, "ktp10", "-1", -1, "-1");
-		Photo f19 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 5 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp105", 2, "ktp10", "-1", -1, "-1");
-		Photo f20 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 5 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp105", 2, "ktp10", "-1", -1, "-1");
+		Photo f1 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 1 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp101", 1, "ktp6", "-1", -1, "-1", -1, -1);
+		Photo f2 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 1 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp101", 1, "ktp6", "-1", -1, "-1", -1, -1);
+		Photo f3 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 1 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp101", 2, "ktp6", "-1", -1, "-1", -1, -1);
+		Photo f4 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 1 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp101", 2, "ktp6", "-1", -1, "-1", -1, -1);
+		Photo f5 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 2 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp102", 1, "ktp7", "-1", -1, "-1", -1, -1);
+		Photo f6 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 2 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp102", 1, "ktp7", "-1", -1, "-1", -1, -1);
+		Photo f7 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 2 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp102", 2, "ktp7", "-1", -1, "-1", -1, -1);
+		Photo f8 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 2 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp102", 2, "ktp7", "-1", -1, "-1", -1, -1);
+		Photo f9 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 3 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp103", 1, "ktp8", "-1", -1, "-1", -1, -1);
+		Photo f10 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 3 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp103", 1, "ktp8", "-1", -1, "-1", -1, -1);
+		Photo f11 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 3 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp103", 2, "ktp8", "-1", -1, "-1", -1, -1);
+		Photo f12 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 3 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp103", 2, "ktp8", "-1", -1, "-1", -1, -1);
+		Photo f13 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 4 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp104", 1, "ktp9", "-1", -1, "-1", -1, -1);
+		Photo f14 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 4 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp104", 1, "ktp9", "-1", -1, "-1", -1, -1);
+		Photo f15 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 4 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp104", 2, "ktp9", "-1", -1, "-1", -1, -1);
+		Photo f16 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 4 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp104", 2, "ktp9", "-1", -1, "-1", -1, -1);
+		Photo f17 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 5 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp105", 1, "ktp10", "-1", -1, "-1", -1, -1);
+		Photo f18 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 5 1", -1, -1, -1, -1, -1, -1,"RHT", "ktp105", 1, "ktp10", "-1", -1, "-1", -1, -1);
+		Photo f19 = new Photo(-1, true, true, 82233213123L, 82233213123L, 1, 82233213123L, "foto 1 pasien 5 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp105", 2, "ktp10", "-1", -1, "-1", -1, -1);
+		Photo f20 = new Photo(-1, true, true, 82233213123L, 82233213123L, 2, 82233213123L, "foto 2 pasien 5 2", -1, -1, -1, -1, -1, -1,"RHT", "ktp105", 2, "ktp10", "-1", -1, "-1", -1, -1);
 		usgFotoTable.insert(database, f1);
 		usgFotoTable.insert(database, f2);
 		usgFotoTable.insert(database, f3);
@@ -364,9 +373,19 @@ public class USGDBHelper extends SQLiteOpenHelper {
 				+ "(select "+ValidationTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalvalidasibaru from "+ValidationTable.TABLE_NAME+" where "+ValidationTable.C_HASSEEN+" = 0 group by "+ValidationTable.C_ID_USGPASIEN+") d on a."+PatientTable.C_ID+" = d.id_pasien", new String[]{""+puskesmasId});
 	}
 	
+	public Cursor getPatientOverviewDoctor(String ktpDoctor){
+		return database.rawQuery("select distinct(a."+PatientTable.C_ID+"), a."+PatientTable.C_NAME+", b.totalfoto, b.terakhir, c.totalpesanbaru, d.totalvalidasibaru"
+				+ " from (select x."+ PatientTable.C_ID+ ", x."+PatientTable.C_NAME+" from "+PatientTable.TABLE_NAME+" x, "+ServeTable.TABLE_NAME+" y,"+ClinicTable.TABLE_NAME+" z where x."+PatientTable.C_ID+" = y."+ServeTable.C_ID_PASIEN+" and y."+ServeTable.C_ID_PUSKESMAS+" = z."+ClinicTable.C_ID+" and z."+ClinicTable.C_ID+" in (select CC."+ClinicTable.C_ID+" from "+ClinicTable.TABLE_NAME+" CC, "+DoctorTable.TABLE_NAME+" DD, "+WorksOnTable.TABLE_NAME+" WW where CC."+ClinicTable.C_ID+" = WW."+WorksOnTable.C_ID_PUSKESMAS+" and DD."+DoctorTable.C_ID_USER+" = WW."+WorksOnTable.C_ID_DOKTER+" and DD."+DoctorTable.C_ID_USER+"=?)) a left outer join "
+				+ "(select "+PhotoTable.C_ID_PASIEN+" as id_pasien, count(*) as totalfoto ,max("+PhotoTable.C_CREATESTAMP+") as terakhir from "+PhotoTable.TABLE_NAME+" group by "+PhotoTable.C_ID_PASIEN+")b on a."+PatientTable.C_ID+" = b.id_pasien left outer join "
+				+ "(select "+CommentTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalpesanbaru from "+CommentTable.TABLE_NAME+" where "+CommentTable.C_HASSEEN+" = 0 group by "+CommentTable.C_ID_USGPASIEN+") c on a."+PatientTable.C_ID+" = c.id_pasien left outer join "
+				+ "(select "+ValidationTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalvalidasibaru from "+ValidationTable.TABLE_NAME+" where "+ValidationTable.C_HASSEEN+" = 0 group by "+ValidationTable.C_ID_USGPASIEN+") d on a."+PatientTable.C_ID+" = d.id_pasien", new String[]{ktpDoctor});
+	}
+	
+
+	
 	public int getPhotoNumberOf(String serverPatientKtp, int serverPregnancyNumber, int serverPhotoNumber){
 		Cursor c = database.query(PhotoTable.TABLE_NAME, new String[]{PhotoTable.C_ID}, 
-				USGTable.C_SERVER_ID+"=? AND "+PhotoTable.C_SERVER_ID2_PASIEN+"=? AND "+PhotoTable.C_SERVER_ID3_KANDUNGAN+"=? ", 
+				PhotoTable.C_SERVER_ID+"=? AND "+PhotoTable.C_SERVER_ID2_PASIEN+"=? AND "+PhotoTable.C_SERVER_ID3_KANDUNGAN+"=? ", 
 				new String[]{""+serverPhotoNumber, ""+serverPatientKtp, ""+serverPregnancyNumber}, null, null, null);
 		int result = -1;
 		if(c.getCount() > 0){
@@ -378,11 +397,11 @@ public class USGDBHelper extends SQLiteOpenHelper {
 	}
 	
 	public Cursor getKandunganOfPatient(String idPasien){
-		return database.query(PregnancyTable.TABLE_NAME, kandunganTable.getAllColumns(), PregnancyTable.C_ID_PASIEN+"=?", new String[]{""+idPasien}, null, null, null);
+		return database.query(PregnancyTable.TABLE_NAME, kandunganTable.getAllColumns(), PregnancyTable.C_ID_PASIEN+"=? and "+PregnancyTable.C_ISACTIVE+"=1", new String[]{""+idPasien}, null, null, null);
 	}
 	
 	public Cursor getPhotosOfKandungan(String idPasien, int noKandungan){
-		return database.query(PhotoTable.TABLE_NAME, usgFotoTable.getAllColumns(), PhotoTable.C_ID_PASIEN+"=? and "+PhotoTable.C_ID_KANDUNGAN + "=?", new String[]{""+idPasien, ""+noKandungan}, null, null,null);
+		return database.query(PhotoTable.TABLE_NAME, usgFotoTable.getAllColumns(), PhotoTable.C_ID_PASIEN+"=? and "+PhotoTable.C_ID_KANDUNGAN + "=? and "+PhotoTable.C_ISACTIVE+"=1", new String[]{""+idPasien, ""+noKandungan}, null, null,null);
 	}
 	
 	public Cursor getPhotos(String patientId, int kandunganId, int photoId){
@@ -391,7 +410,9 @@ public class USGDBHelper extends SQLiteOpenHelper {
 	}
 	
 	public Cursor getKomentarOf(String idPasien){
-		return database.rawQuery("select a.nama, b."+CommentTable.C_FROM_DOCTOR+", b."+CommentTable.C_CONTENT+", b."+CommentTable.C_CREATESTAMP+", b."+CommentTable.C_HASSEEN+" from (select c."+DoctorTable.C_ID_USER+" as id_user, d."+UserTable.C_NAME+" as nama from "+DoctorTable.TABLE_NAME+" c, "+UserTable.TABLE_NAME+" d where c."+DoctorTable.C_ID_USER+" = d."+UserTable.C_ID+") a, "+CommentTable.TABLE_NAME+" b where a.id_user = b."+CommentTable.C_ID_DOKTER+" and b."+CommentTable.C_ID_USGPASIEN+" =?", new String[]{""+idPasien});
+		return database.rawQuery("select a.nama, b."+CommentTable.C_FROM_DOCTOR+", b."+CommentTable.C_CONTENT+", b."+CommentTable.C_CREATESTAMP+", b."+CommentTable.C_HASSEEN+
+				" from "+ CommentTable.TABLE_NAME+" b left outer join (select c."+DoctorTable.C_ID_USER+" as id_user, d."+UserTable.C_NAME+" as nama from "+DoctorTable.TABLE_NAME+" c, "+UserTable.TABLE_NAME+" d where c."+DoctorTable.C_ID_USER+" = d."+UserTable.C_ID+") a "+
+				 "on  a.id_user = b."+CommentTable.C_ID_DOKTER+" where  b."+CommentTable.C_ID_USGPASIEN+" =?", new String[]{""+idPasien});
 	}
 
 	public Cursor getPasien(String patientId) {
@@ -401,9 +422,36 @@ public class USGDBHelper extends SQLiteOpenHelper {
 	public Cursor getPhoto(String ktp, int pregnancyNumber, int photoNumber) {
 		return usgFotoTable.getItem(database, new String[]{""+photoNumber, ktp, ""+pregnancyNumber});
 	}
+
+	public Cursor getUser(String ktp) {
+		return userTable.getItem(database, new String[]{ktp});
+	}
+	
+	public Cursor getDoctor(String ktp) {
+		return dokterTable.getItem(database, new String[]{ktp});
+	}
+	
+	public Cursor getOfficer(String ktp) {
+		return petugasTable.getItem(database, new String[]{ktp});
+	}
+	
+	public Cursor getClinic(int clinicId) {
+		return puskesmasTable.getItem(database, new String[]{""+clinicId});
+	}
 	
 	public Cursor getComment(String ktp, int commentNumber) {
 		return komentarTable.getItem(database, new String[]{""+commentNumber, ktp});
+	}
+	
+	public Cursor getValidations(int photoNumber, int pregnancyNumber, String userKtp) {
+		return database.query(ValidationTable.TABLE_NAME, validasiTable.getAllColumns(), 
+				ValidationTable.C_ID_USGFOTO+"=? and "+ValidationTable.C_ID_USGKANDUNGAN + 
+				"=? and "+ValidationTable.C_ID_USGPASIEN+"=?", new String[]{""+photoNumber, ""+pregnancyNumber, userKtp}, 
+				null, null, null);
+	}
+	
+	public Cursor getValidation(String doctorKtp, int photoNumber, int pregnancyNumber, String userKtp) {
+		return validasiTable.getItem(database, new String[]{doctorKtp, ""+photoNumber, ""+pregnancyNumber, userKtp});
 	}
 	
 	public int getLastIndexofKomentar(String pasienId){
@@ -687,5 +735,35 @@ public class USGDBHelper extends SQLiteOpenHelper {
 		return bjTable.getItemOnServerId(database, serverIdArgs);
 	}
 	
+	public void deletePatient(String patientId){
+		ContentValues cv = new ContentValues();
+		cv.put(USGTable.C_ISACTIVE, 0);
+		cv.put(USGTable.C_DIRTY, 1);
+		String[] args = {patientId};
+		database.update(PatientTable.TABLE_NAME, cv, pasienTable.getPrimaryClause(), args);
+		database.update(PregnancyTable.TABLE_NAME, cv, PregnancyTable.C_ID_PASIEN+"=?", args);
+		database.update(PhotoTable.TABLE_NAME, cv, PhotoTable.C_ID_PASIEN+"=?", args);
+		database.update(CommentTable.TABLE_NAME, cv, CommentTable.C_ID_USGPASIEN+"=?", args);
+		database.update(ValidationTable.TABLE_NAME, cv, ValidationTable.C_ID_USGPASIEN+"=?", args);		
+	}
+	
+	public void deletePregnancy(String patientId, int pregnancyId) {
+		ContentValues cv = new ContentValues();
+		cv.put(USGTable.C_ISACTIVE, 0);
+		cv.put(USGTable.C_DIRTY, 1);
+		String[] args = {patientId, ""+pregnancyId};
+		database.update(PregnancyTable.TABLE_NAME, cv, PregnancyTable.C_ID_PASIEN+"=? and "+PregnancyTable.C_ID+"=?", args);
+		database.update(PhotoTable.TABLE_NAME, cv, PhotoTable.C_ID_PASIEN+"=? and "+PhotoTable.C_ID_KANDUNGAN+"=?", args);
+		database.update(ValidationTable.TABLE_NAME, cv, ValidationTable.C_ID_USGPASIEN+"=? and "+ValidationTable.C_ID_USGKANDUNGAN+"=?", args);			
+	}
 
+	public void deletePhoto(String patientId, int pregnancyId, int photoId) {
+		// TODO Auto-generated method stub
+		ContentValues cv = new ContentValues();
+		cv.put(USGTable.C_ISACTIVE, 0);
+		cv.put(USGTable.C_DIRTY, 1);
+		String[] args = {patientId, ""+pregnancyId, ""+photoId};
+		database.update(PhotoTable.TABLE_NAME, cv, PhotoTable.C_ID_PASIEN+"=? and "+PhotoTable.C_ID_KANDUNGAN+"=? and "+PhotoTable.C_ID+"=?", args);
+		database.update(ValidationTable.TABLE_NAME, cv, ValidationTable.C_ID_USGPASIEN+"=? and "+ValidationTable.C_ID_USGKANDUNGAN+"=? and "+ValidationTable.C_ID_USGFOTO+"=?", args);
+	}
 }

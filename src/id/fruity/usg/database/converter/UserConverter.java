@@ -13,7 +13,7 @@ public class UserConverter {
 			return null;
 		c.moveToFirst();
 		User u = new User(c.getString(12), c.getInt(8) == 1, c.getInt(9) == 1, c.getLong(10), c.getLong(11), c.getString(0), c.getString(1), 
-				c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7));
+				c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7), c.getLong(13), c.getLong(14));
 		c.close();
 		return u;
 	}
@@ -23,7 +23,7 @@ public class UserConverter {
 		ArrayList<User> us = new ArrayList<User>();
 		while (!c.isAfterLast()) {
 			User u = new User(c.getString(12), c.getInt(8) == 1, c.getInt(9) == 1, c.getLong(10), c.getLong(11), c.getString(0), c.getString(1), 
-					c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7));
+					c.getString(2), c.getString(3), c.getString(4), c.getString(5), c.getString(6), c.getString(7), c.getLong(13), c.getLong(14));
 			us.add(u);
 			c.moveToNext();
 		}
