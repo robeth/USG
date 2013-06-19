@@ -256,6 +256,87 @@ public class Synchonization {
 		return users;
 	}
 	
+	public static ArrayList<Patient> getExpiredPatientPhoto() {
+		if(helper == null){
+			helper = getDBHelper();
+		}
+		helper.open();
+		ArrayList<Patient> patients = PatientConverter.convertAll(helper.getExpiredPatientPhoto());
+		helper.close();
+		return patients;
+	}
+	
+	public static ArrayList<Photo> getExpiredUSGPhoto() {
+		if(helper == null){
+			helper = getDBHelper();
+		}
+		helper.open();
+		ArrayList<Photo> photos = PhotoConverter.convertAll(helper.getExpiredUSGPhoto());
+		helper.close();
+		return photos;
+	}
+	
+	public static ArrayList<Patient> getFreshPatientPhoto() {
+		if(helper == null){
+			helper = getDBHelper();
+		}
+		helper.open();
+		ArrayList<Patient> patients = PatientConverter.convertAll(helper.getFreshPatientPhoto());
+		helper.close();
+		return patients;
+	}
+	
+	public static ArrayList<Photo> getFreshUSGPhoto() {
+		if(helper == null){
+			helper = getDBHelper();
+		}
+		helper.open();
+		ArrayList<Photo> photos = PhotoConverter.convertAll(helper.getFreshUSGPhoto());
+		helper.close();
+		return photos;
+	}
+	
+	public static void successUploadPatientPhoto(Patient p) {
+		if(helper == null){
+			helper = getDBHelper();
+		}
+		helper.open();
+		p.setServerPhotoTimestamp(p.getPhotoTimestamp());
+		helper.updatePatient(p);
+		helper.close();
+	}
+	
+	public static void successUploadUSGPhoto(Photo p) {
+		if(helper == null){
+			helper = getDBHelper();
+		}
+		p.setServerPhotoTimestamp(p.getPhotoTimestamp());
+		helper.open();
+		helper.updatePhoto(p);
+		helper.close();
+	}
+	
+	public static void successDownloadPatientPhoto(Patient p, String filename) {
+		if(helper == null){
+			helper = getDBHelper();
+		}
+		p.setFilename(filename);
+		p.setPhotoTimestamp(p.getServerPhotoTimestamp());
+		helper.open();
+		helper.updatePatient(p);
+		helper.close();
+	}
+	
+	public static void successDownloadUSGPhoto(Photo p, String filename) {
+		if(helper == null){
+			helper = getDBHelper();
+		}
+		p.setPhotoTimestamp(p.getServerPhotoTimestamp());
+		p.setFilename(filename);
+		helper.open();
+		helper.updatePhoto(p);
+		helper.close();
+	}
 	
 	public static void updateUserEntriesFromServer(User[] entries){
 		if(helper == null){
@@ -500,7 +581,7 @@ public class Synchonization {
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
-			int lastPhotoNumber = helper.getLastIndexOfPhotos(entries[i].getIdPasien(), entries[i].getNoKandungan());
+			int lastPhotoNumber = helper.getLastIndexOfPhotos(entries[i].getServerId2(), entries[i].getServerId3());
 			entries[i].onServerAdd(lastPhotoNumber+1);
 			helper.insertPhoto(entries[i]);
 		}
@@ -537,7 +618,7 @@ public class Synchonization {
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
-			int lastNumber = helper.getLastIndexofKomentar(entries[i].getIdPasien());
+			int lastNumber = helper.getLastIndexofKomentar(entries[i].getServerId3());
 			entries[i].onServerAdd(lastNumber+1);
 			helper.insertComment(entries[i]);
 		}
@@ -550,7 +631,7 @@ public class Synchonization {
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
-			int localPhotoNumber = helper.getPhotoNumberOf(entries[i].getServerId4(), entries[i].getServerId2(), entries[i].getServerId2());
+			int localPhotoNumber = helper.getPhotoNumberOf(entries[i].getServerId4(), entries[i].getServerId3(), entries[i].getServerId2());
 			entries[i].onServerAdd(localPhotoNumber);
 			helper.insertValidation(entries[i]);
 		}
@@ -632,6 +713,7 @@ public class Synchonization {
 		if(p!=null){
 			p.onSentSuccessCont(serverPhotoNumber);
 			helper.updatePhoto(p);
+			helper.updateValidationPhotoNumber(ktp, pregnancyNumber, localPhotoNumber, serverPhotoNumber);
 		}
 		helper.close();
 	}
@@ -647,6 +729,46 @@ public class Synchonization {
 			c.onSentSuccessCont(serverCommentNumber);
 			helper.updateComment(c);
 		}
+		helper.close();
+	}
+	
+	public static void addClinicServer(Clinic entry){
+		if(helper == null){
+			helper = getDBHelper();
+		}
+		helper.open();
+		entry.onServerAdd();
+		helper.insertClinic(entry);
+		helper.close();
+	}
+	
+	public static void addUserServer(User entry){
+		if(helper == null){
+			helper = getDBHelper();
+		}
+		helper.open();
+		entry.onServerAdd();
+		helper.insertUser(entry);
+		helper.close();
+	}
+	
+	public static void addOfficerServer(Officer entry){
+		if(helper == null){
+			helper = getDBHelper();
+		}
+		helper.open();
+		entry.onServerAdd();
+		helper.insertOfficer(entry);
+		helper.close();
+	}
+	
+	public static void addDoctorServer(Doctor entry){
+		if(helper == null){
+			helper = getDBHelper();
+		}
+		helper.open();
+		entry.onServerAdd();
+		helper.insertDoctor(entry);
 		helper.close();
 	}
 	

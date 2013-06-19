@@ -15,14 +15,13 @@
         android:label="@string/app_name">
         
         <activity android:label="Pasien" android:name="id.fruity.usg.LoginActivity" android:theme="@style/Theme.Sherlock">
-            
-        </activity>
-        <activity android:label="Pasien" android:name="id.fruity.usg.PatientListActivity" android:theme="@style/Theme.Sherlock">
-             <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:label="Pasien" android:name="id.fruity.usg.PatientListActivity" android:theme="@style/Theme.Sherlock">
         </activity>
         <activity android:label="Pasien" android:name="id.fruity.usg.PatientActivity" android:theme="@style/Theme.Sherlock" >
            

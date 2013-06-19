@@ -182,6 +182,7 @@ public class Validation extends USGTableEntry {
 	public void setServerId4(String serverId4) {
 		this.serverId4 = serverId4;
 	}
+	
 	@Override
 	public String toString() {
 		return "Validation [idDokter=" + idDokter + ", noPhoto=" + noPhoto

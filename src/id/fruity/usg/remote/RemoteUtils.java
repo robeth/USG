@@ -13,6 +13,7 @@ import id.fruity.usg.database.table.entry.Validation;
 import id.fruity.usg.database.table.entry.WorksOn;
 import id.fruity.usg.util.DateUtils;
 import id.fruity.usg.util.Preference;
+import id.fruity.usg.util.SDUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -53,16 +54,13 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class RemoteUtils {
-	private static final String TAG = "RemoteUtils";
-	private static final String TEST1 = "http://192.168.43.211:8000/polls/update/1/";
-	private static final String BASE_URL = "http://192.168.43.211:8000/polls/";
+	private static final String BASE_URL = "http://192.168.43.211:8000/terrain/";
 	private static final String USER_SUB_URL = "mobile/sync/user/",
 			DOCTOR_SUB_URL = "mobile/sync/doctor/",
 			CLINIC_SUB_URL = "mobile/sync/clinic/",
@@ -74,10 +72,13 @@ public class RemoteUtils {
 			WORKSON_SUB_URL = "mobile/sync/workson/",
 			COMMENT_SUB_URL = "mobile/sync/comment/",
 			VALIDATION_SUB_URL = "mobile/sync/validation/",
-			PHOTOUSER_SUB_URL = "mobile/sync/photo/user/",
+			// PHOTOUSER_SUB_URL = "mobile/sync/photo/user/",
+			PHOTOPATIENT_SUB_URL = "mobile/sync/photo/patient/",
 			PHOTOUSG_SUB_URL = "mobile/sync/photo/usg/",
-			DOWNLOADUSER_SUB_URL = "mobile/download/photo/user/",
-			DOWNLOADUSG_SUB_URL = "mobile/download/photo/usg/";
+			// DOWNLOADUSER_SUB_URL = "mobile/download/photo/user/",
+			DOWNLOADPATIENT_SUB_URL = "mobile/download/photo/patient/",
+			DOWNLOADUSG_SUB_URL = "mobile/download/photo/usg/",
+			LOGIN_SUB_URL = "mobile/login/";
 	private static ArrayList<User> newUsers, updateUsers;
 	private static ArrayList<Patient> newPatients, updatePatients;
 	private static ArrayList<Pregnancy> newPregnancies, updatePregnancies;
@@ -89,21 +90,28 @@ public class RemoteUtils {
 	private static ArrayList<WorksOn> newWorksOns, updateWorksOns;
 	private static ArrayList<Validation> newValidations, updateValidations;
 	private static ArrayList<Comment> newComments, updateComments;
+	String attachmentName = "bitmap";
+	String attachmentFileName = "bitmap.bmp";
+	String crlf = "\r\n";
+	String twoHyphens = "--";
+	String boundary = "*****";
 
-	public static void uploadPhoto() {
-		String url = BASE_URL + PHOTOUSG_SUB_URL;
-		String imagePath = Environment.getExternalStorageDirectory()
-				+ File.separator + "USG Apps" + File.separator + "USG"
-				+ File.separator + "USG_20130519_194645.jpg";
-		Log.d("Image path", imagePath + " -- " + url);
+	public static boolean uploadPhoto(String uploadUrl, String imagePath,
+			String ktp, long timestamp) {
+		// String url = BASE_URL + PHOTOUSG_SUB_URL;
+		// String imagePath = Environment.getExternalStorageDirectory()
+		// + File.separator + "USG Apps" + File.separator + "USG"
+		// + File.separator + "USG_20130519_194645.jpg";
+		Log.d("Image path", imagePath + " -- " + uploadUrl);
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpContext localContext = new BasicHttpContext();
-		HttpPost httpPost = new HttpPost(url);
+		HttpPost httpPost = new HttpPost(uploadUrl);
 
 		try {
 			MultipartEntity entity = new MultipartEntity(
 					HttpMultipartMode.BROWSER_COMPATIBLE);
-			entity.addPart("ktp", new StringBody("1122334455"));
+			entity.addPart("ktp", new StringBody(ktp));
+			entity.addPart("timestamp", new StringBody(timestamp + ""));
 			entity.addPart("image", new FileBody(new File(imagePath)));
 			httpPost.setEntity(entity);
 			HttpResponse response = httpClient.execute(httpPost, localContext);
@@ -112,28 +120,153 @@ public class RemoteUtils {
 		} catch (IOException e) {
 			Log.d("After sending photo", "Error");
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
-	public static void downloadPhoto(String downloadUrl, String imagePath) {
+	public static boolean uploadPhoto(String uploadUrl, String imagePath,
+			String ktp, int pregNumber, int photoNumber, long timestamp) {
+		// String url = BASE_URL + PHOTOUSG_SUB_URL;
+		// String imagePath = Environment.getExternalStorageDirectory()
+		// + File.separator + "USG Apps" + File.separator + "USG"
+		// + File.separator + "USG_20130519_194645.jpg";
+		Log.d("Image path", imagePath + " -- " + uploadUrl);
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpContext localContext = new BasicHttpContext();
+		HttpPost httpPost = new HttpPost(uploadUrl);
+
+		try {
+			MultipartEntity entity = new MultipartEntity(
+					HttpMultipartMode.BROWSER_COMPATIBLE);
+			entity.addPart("ktp", new StringBody(ktp));
+			entity.addPart("timestamp", new StringBody(timestamp + ""));
+			entity.addPart("pregnancy_number", new StringBody(pregNumber + ""));
+			entity.addPart("photo_number", new StringBody(photoNumber + ""));
+			entity.addPart("image", new FileBody(new File(imagePath)));
+			httpPost.setEntity(entity);
+			HttpResponse response = httpClient.execute(httpPost, localContext);
+			Log.d("After sending photo", "Res"
+					+ response.getStatusLine().getStatusCode());
+		} catch (IOException e) {
+			Log.d("After sending photo", "Error");
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean login(String username, String password) {
+		String url = BASE_URL + LOGIN_SUB_URL;
+		Log.d("REMOTE", "Login to :" + url);
+		HttpClient client = new DefaultHttpClient();
+		HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+		JSONObject json = new JSONObject();
+		StringBuilder builder = new StringBuilder();
+		HttpResponse response;
+		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+				.create();
+		try {
+			HttpPost post = new HttpPost(url);
+			json.put("username", username);
+			json.put("password", password);
+
+			StringEntity se = new StringEntity(json.toString(), "UTF-8");
+			post.setEntity(se);
+			post.setHeader("Accept", "application/json");
+			post.setHeader(HTTP.CONTENT_TYPE, "application/json");
+			response = client.execute(post);
+
+			if (response != null) {
+				StatusLine statusLine = response.getStatusLine();
+				int statusCode = statusLine.getStatusCode();
+				if (statusCode == 200) {
+					HttpEntity entity = response.getEntity();
+					InputStream content = entity.getContent();
+					BufferedReader reader = new BufferedReader(
+							new InputStreamReader(content));
+					String line;
+					while ((line = reader.readLine()) != null) {
+						builder.append(line);
+					}
+				} else {
+					Log.e("REMOTE", "Login Status code fail:" + statusCode);
+					return false;
+				}
+			}
+		} catch (Exception e) {
+			Log.d("REMOTE", "Various Error");
+			e.printStackTrace();
+			return false;
+		}
+		JSONObject root;
+		try {
+			root = new JSONObject(builder.toString());
+			boolean res = root.getBoolean("result");
+			if (!res)
+				return false;
+
+			boolean isDoctor = root.getBoolean("is_doctor");
+
+			User u = gson.fromJson(root.getJSONObject("user").toString(),
+					User.class);
+			Synchonization.addUserServer(u);
+			Doctor d;
+			Officer o;
+			Clinic c;
+			d = null;
+			o = null;
+			c = null;
+
+			if (isDoctor) {
+				d = gson.fromJson(root.getJSONObject("doctor").toString(),
+						Doctor.class);
+				Synchonization.addDoctorServer(d);
+			} else {
+				o = gson.fromJson(root.getJSONObject("officer").toString(),
+						Officer.class);
+				c = gson.fromJson(root.getJSONObject("clinic").toString(),
+						Clinic.class);
+				Synchonization.addOfficerServer(o);
+				Synchonization.addClinicServer(c);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean downloadPhoto(String downloadUrl, String imagePath,
+			String ktp) {
 		Log.d("Image path", imagePath + " -- " + downloadUrl);
 
 		try {
+			
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("ktp", ktp));
+			String parameters = getQuery(params);
+			
 			URL url = new URL(downloadUrl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(10000);
 			conn.setConnectTimeout(15000);
 			conn.setRequestMethod("POST");
+			conn.setUseCaches(false);
 			conn.setDoInput(true);
 			conn.setDoOutput(true);
-
-			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("ktp", "1122334455"));
+			conn.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded");
+			conn.setRequestProperty("Content-Length",
+					"" + Integer.toString(parameters.getBytes().length));
+			conn.setRequestProperty("Content-Language", "en-US");
 
 			OutputStream os = conn.getOutputStream();
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
 					os, "UTF-8"));
 			writer.write(getQuery(params));
+			writer.flush();
+			writer.close();
 			conn.connect();
 
 			InputStream inputStream = null;
@@ -160,6 +293,131 @@ public class RemoteUtils {
 		} catch (IOException e) {
 			Log.d("After download photo", "Error");
 			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean downloadPhoto(String downloadUrl, String imagePath,
+			String ktp, int pregnancyNumber, int photoNumber) {
+		Log.d("Image path Yuhuu", imagePath + " -- " + downloadUrl);
+
+		try {
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("ktp", ktp));
+			params.add(new BasicNameValuePair("pregnancy_number",
+					pregnancyNumber + ""));
+			params.add(new BasicNameValuePair("photo_number", photoNumber + ""));
+			String parameters = getQuery(params);
+			
+			URL url = new URL(downloadUrl);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setReadTimeout(10000);
+			conn.setConnectTimeout(15000);
+			conn.setRequestMethod("POST");
+			conn.setUseCaches(false);
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			conn.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded");
+			conn.setRequestProperty("Content-Length",
+					"" + Integer.toString(parameters.getBytes().length));
+			conn.setRequestProperty("Content-Language", "en-US");
+
+			OutputStream os = conn.getOutputStream();
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+					os, "UTF-8"));
+			writer.write(getQuery(params));
+			writer.flush();
+			writer.close();
+			conn.connect();
+
+
+			InputStream inputStream = null;
+			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				inputStream = conn.getInputStream();
+			}
+
+			try {
+				final File targetFile = new File(imagePath);
+				FileOutputStream fos = new FileOutputStream(targetFile);
+				int size = 1024 * 1024;
+				byte[] buf = new byte[size];
+				int byteRead;
+				while (((byteRead = inputStream.read(buf)) != -1)) {
+					fos.write(buf, 0, byteRead);
+				}
+				fos.close();
+			} finally {
+				if (inputStream != null) {
+					inputStream.close();
+				}
+			}
+
+		} catch (Exception e) {
+			Log.d("After download photo", "Error");
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public static void syncPhotoFile() {
+		ArrayList<Patient> patients = Synchonization.getFreshPatientPhoto();
+		String url = "", imagePath = "";
+		final String defaultPath = SDUtils.getDefaultPath();
+		boolean result;
+		for (Patient p : patients) {
+			if (!p.getFilename().equals("-1")) {
+				url = BASE_URL + PHOTOPATIENT_SUB_URL;
+				imagePath = defaultPath + p.getFilename();
+				result = uploadPhoto(url, imagePath, p.getIdPasien(),
+						p.getPhotoTimestamp());
+				if (result) {
+					Synchonization.successUploadPatientPhoto(p);
+				}
+			}
+		}
+		ArrayList<Photo> photos = Synchonization.getFreshUSGPhoto();
+		for (Photo p : photos) {
+			if (!p.getFilename().equals("-1")) {
+				url = BASE_URL + PHOTOUSG_SUB_URL;
+				imagePath = defaultPath + p.getFilename();
+				result = uploadPhoto(url, imagePath, p.getIdPasien(),
+						p.getNoKandungan(), p.getServerId(),
+						p.getPhotoTimestamp());
+				if (result) {
+					Synchonization.successUploadUSGPhoto(p);
+				}
+			}
+		}
+		int counter = 0;
+		patients = Synchonization.getExpiredPatientPhoto();
+		for (Patient p : patients) {
+			url = BASE_URL + DOWNLOADPATIENT_SUB_URL;
+			imagePath = SDUtils.getDefaultPath();
+			String temp = "patient_" + DateUtils.getSimpleCurrentString()+(counter++)
+					+ ".jpg";
+			imagePath = defaultPath + temp;
+			Log.d("Patient download photo", "name:"+p.getName()+" -- local"+p.getPhotoTimestamp()+" global"+p.getServerPhotoTimestamp());
+			result = downloadPhoto(url, imagePath, p.getIdPasien());
+			if (result) {
+				Synchonization.successDownloadPatientPhoto(p, temp);
+			}
+		}
+		counter = 0;
+		photos = Synchonization.getExpiredUSGPhoto();
+		for (Photo p : photos) {
+			url = BASE_URL + DOWNLOADUSG_SUB_URL;
+			imagePath = SDUtils.getDefaultPath();
+			String temp = "usg_" + DateUtils.getSimpleCurrentString() + (counter++)+".jpg";
+			;
+			imagePath = defaultPath + temp;
+			result = downloadPhoto(url, imagePath, p.getIdPasien(),
+					p.getNoKandungan(), p.getServerId());
+			if (result) {
+				Synchonization.successDownloadUSGPhoto(p, temp);
+			}
 		}
 	}
 
@@ -380,7 +638,7 @@ public class RemoteUtils {
 		return builder.toString();
 	}
 
-	public static boolean syncUser() {
+	public static boolean syncUser(long currentTimestamp) {
 		long lastSync = Preference.getLastSync();
 		String url = BASE_URL + USER_SUB_URL;
 		StringBuilder builder = new StringBuilder();
@@ -393,6 +651,7 @@ public class RemoteUtils {
 		try {
 			HttpPost post = new HttpPost(url);
 			json.put("timestamp", lastSync);
+			json.put("expected_timestamp", currentTimestamp);
 
 			JSONObject add = new JSONObject();
 			JSONArray addUserTable = new JSONArray();
@@ -464,7 +723,7 @@ public class RemoteUtils {
 		return true;
 	}
 
-	public static boolean syncDoctor() {
+	public static boolean syncDoctor(long currentTimestamp) {
 		long lastSync = Preference.getLastSync();
 		String url = BASE_URL + DOCTOR_SUB_URL;
 		StringBuilder builder = new StringBuilder();
@@ -477,6 +736,7 @@ public class RemoteUtils {
 		try {
 			HttpPost post = new HttpPost(url);
 			json.put("timestamp", lastSync);
+			json.put("expected_timestamp", currentTimestamp);
 
 			JSONObject add = new JSONObject();
 			JSONArray addDoctorTable = new JSONArray();
@@ -548,7 +808,7 @@ public class RemoteUtils {
 		return true;
 	}
 
-	public static boolean syncClinic() {
+	public static boolean syncClinic(long currentTimestamp) {
 		long lastSync = Preference.getLastSync();
 		String url = BASE_URL + CLINIC_SUB_URL;
 
@@ -563,6 +823,7 @@ public class RemoteUtils {
 		try {
 			HttpPost post = new HttpPost(url);
 			json.put("timestamp", lastSync);
+			json.put("expected_timestamp", currentTimestamp);
 
 			JSONObject add = new JSONObject();
 			JSONArray addClinicTable = new JSONArray();
@@ -634,7 +895,7 @@ public class RemoteUtils {
 		return true;
 	}
 
-	public static boolean syncOfficer() {
+	public static boolean syncOfficer(long currentTimestamp) {
 		long lastSync = Preference.getLastSync();
 		String url = BASE_URL + OFFICER_SUB_URL;
 		StringBuilder builder = new StringBuilder();
@@ -647,6 +908,7 @@ public class RemoteUtils {
 		try {
 			HttpPost post = new HttpPost(url);
 			json.put("timestamp", lastSync);
+			json.put("expected_timestamp", currentTimestamp);
 			JSONObject add = new JSONObject();
 
 			JSONArray addOfficerTable = new JSONArray();
@@ -721,7 +983,7 @@ public class RemoteUtils {
 		return true;
 	}
 
-	public static boolean syncPatient() {
+	public static boolean syncPatient(long currentTimestamp) {
 		long lastSync = Preference.getLastSync();
 		String url = BASE_URL + PATIENT_SUB_URL;
 		StringBuilder builder = new StringBuilder();
@@ -734,6 +996,7 @@ public class RemoteUtils {
 		try {
 			HttpPost post = new HttpPost(url);
 			json.put("timestamp", lastSync);
+			json.put("expected_timestamp", currentTimestamp);
 			JSONObject add = new JSONObject();
 			JSONArray addPatientTable = new JSONArray();
 			newPatients = Synchonization.getNewPatient(lastSync);
@@ -804,7 +1067,7 @@ public class RemoteUtils {
 		return true;
 	}
 
-	public static boolean syncPregnancy() {
+	public static boolean syncPregnancy(long currentTimestamp) {
 		long lastSync = Preference.getLastSync();
 		String url = BASE_URL + PREGNANCY_SUB_URL;
 		StringBuilder builder = new StringBuilder();
@@ -817,6 +1080,7 @@ public class RemoteUtils {
 		try {
 			HttpPost post = new HttpPost(url);
 			json.put("timestamp", lastSync);
+			json.put("expected_timestamp", currentTimestamp);
 			JSONObject add = new JSONObject();
 			JSONArray addPregnancyTable = new JSONArray();
 			newPregnancies = Synchonization.getNewPregnancy(lastSync);
@@ -888,7 +1152,7 @@ public class RemoteUtils {
 		return true;
 	}
 
-	public static boolean syncPhoto() {
+	public static boolean syncPhoto(long currentTimestamp) {
 		long lastSync = Preference.getLastSync();
 		String url = BASE_URL + PHOTO_SUB_URL;
 		StringBuilder builder = new StringBuilder();
@@ -901,11 +1165,13 @@ public class RemoteUtils {
 		try {
 			HttpPost post = new HttpPost(url);
 			json.put("timestamp", lastSync);
+			json.put("expected_timestamp", currentTimestamp);
 			JSONObject add = new JSONObject();
 			JSONArray addPhotoTable = new JSONArray();
 			newPhotos = Synchonization.getNewPhoto(lastSync);
 			for (Photo p : newPhotos) {
 				addPhotoTable.put(new JSONObject(gson.toJson(p)));
+				Log.d("New Photo", p.toString());
 			}
 
 			JSONObject update = new JSONObject();
@@ -913,6 +1179,7 @@ public class RemoteUtils {
 			updatePhotos = Synchonization.getUpdatePhoto(lastSync);
 			for (Photo p : updatePhotos) {
 				updatePhotoTable.put(new JSONObject(gson.toJson(p)));
+				Log.d("Update Photo", p.toString());
 			}
 
 			add.put("photo", addPhotoTable);
@@ -920,6 +1187,7 @@ public class RemoteUtils {
 
 			json.put("add", add);
 			json.put("update", update);
+			Log.d("Photo JSON", json.toString());
 
 			StringEntity se = new StringEntity(json.toString(), "UTF-8");
 			post.setEntity(se);
@@ -950,6 +1218,7 @@ public class RemoteUtils {
 		}
 		JSONObject root;
 		try {
+			Log.d("Response JSON", builder.toString());
 			root = new JSONObject(builder.toString());
 			JSONObject addRoot = root.getJSONObject("add");
 			JSONObject updateRoot = root.getJSONObject("update");
@@ -967,6 +1236,9 @@ public class RemoteUtils {
 				String ktp = j.getString("ktp");
 				Synchonization.updatePhotoServerId(ktp, pregnancyNumber,
 						localPhotoNumber, serverPhotoNumber);
+				Log.d("OnUpdatePhotoServerId", "ktp:" + ktp + " -- pregnancy:"
+						+ pregnancyNumber + " -- local:" + localPhotoNumber
+						+ "-- global:" + serverPhotoNumber);
 			}
 			Synchonization.onUpdateEntriesSent(updatePhotos);
 
@@ -983,7 +1255,7 @@ public class RemoteUtils {
 		return true;
 	}
 
-	public static boolean syncServe() {
+	public static boolean syncServe(long currentTimestamp) {
 		long lastSync = Preference.getLastSync();
 		String url = BASE_URL + SERVE_SUB_URL;
 		StringBuilder builder = new StringBuilder();
@@ -996,6 +1268,7 @@ public class RemoteUtils {
 		try {
 			HttpPost post = new HttpPost(url);
 			json.put("timestamp", lastSync);
+			json.put("expected_timestamp", currentTimestamp);
 			JSONObject add = new JSONObject();
 			JSONArray addServeTable = new JSONArray();
 			newServes = Synchonization.getNewServe(lastSync);
@@ -1066,7 +1339,7 @@ public class RemoteUtils {
 		return true;
 	}
 
-	public static boolean syncWorksOn() {
+	public static boolean syncWorksOn(long currentTimestamp) {
 		long lastSync = Preference.getLastSync();
 		String url = BASE_URL + WORKSON_SUB_URL;
 		StringBuilder builder = new StringBuilder();
@@ -1079,6 +1352,8 @@ public class RemoteUtils {
 		try {
 			HttpPost post = new HttpPost(url);
 			json.put("timestamp", lastSync);
+			json.put("expected_timestamp", currentTimestamp);
+
 			JSONObject add = new JSONObject();
 			JSONArray addWorksOnTable = new JSONArray();
 			newWorksOns = Synchonization.getNewWorksOn(lastSync);
@@ -1149,7 +1424,7 @@ public class RemoteUtils {
 		return true;
 	}
 
-	public static boolean syncComment() {
+	public static boolean syncComment(long currentTimestamp) {
 		long lastSync = Preference.getLastSync();
 		String url = BASE_URL + COMMENT_SUB_URL;
 		StringBuilder builder = new StringBuilder();
@@ -1162,6 +1437,7 @@ public class RemoteUtils {
 		try {
 			HttpPost post = new HttpPost(url);
 			json.put("timestamp", lastSync);
+			json.put("expected_timestamp", currentTimestamp);
 			JSONObject add = new JSONObject();
 			JSONArray addCommentTable = new JSONArray();
 			newComments = Synchonization.getNewComment(lastSync);
@@ -1242,7 +1518,7 @@ public class RemoteUtils {
 		return true;
 	}
 
-	public static boolean syncValidation() {
+	public static boolean syncValidation(long currentTimestamp) {
 		long lastSync = Preference.getLastSync();
 		String url = BASE_URL + VALIDATION_SUB_URL;
 		StringBuilder builder = new StringBuilder();
@@ -1255,10 +1531,12 @@ public class RemoteUtils {
 		try {
 			HttpPost post = new HttpPost(url);
 			json.put("timestamp", lastSync);
+			json.put("expected_timestamp", currentTimestamp);
 			JSONObject add = new JSONObject();
 			JSONArray addValidationTable = new JSONArray();
 			newValidations = Synchonization.getNewValidation(lastSync);
 			for (Validation v : newValidations) {
+				Log.d("new validation", v.toString());
 				addValidationTable.put(new JSONObject(gson.toJson(v)));
 			}
 
@@ -1266,6 +1544,7 @@ public class RemoteUtils {
 			JSONArray updateValidationTable = new JSONArray();
 			updateValidations = Synchonization.getUpdateValidation(lastSync);
 			for (Validation v : updateValidations) {
+				Log.d("update validation", v.toString());
 				updateValidationTable.put(new JSONObject(gson.toJson(v)));
 			}
 
@@ -1274,7 +1553,7 @@ public class RemoteUtils {
 
 			json.put("add", add);
 			json.put("update", update);
-
+			Log.d("JSON Validation", json.toString());
 			StringEntity se = new StringEntity(json.toString(), "UTF-8");
 			post.setEntity(se);
 			post.setHeader("Accept", "application/json");
@@ -1305,6 +1584,7 @@ public class RemoteUtils {
 		JSONObject root;
 		try {
 			root = new JSONObject(builder.toString());
+			Log.d("Res JSON Validation", builder.toString());
 			JSONObject addRoot = root.getJSONObject("add");
 			JSONObject updateRoot = root.getJSONObject("update");
 			gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
@@ -1334,14 +1614,9 @@ public class RemoteUtils {
 		d.execute();
 	}
 
-	public static void startAsyn2(Activity a) {
-		DownloadWebPageTask2 d = new DownloadWebPageTask2();
-		d.execute();
-	}
-
-	public static void startAsyn3(Activity a) {
+	public static void startPhotoSync(Activity a) {
 		DownloadImageTask d = new DownloadImageTask();
-		d.execute(0);
+		d.execute();
 	}
 
 	private static class DownloadWebPageTask extends
@@ -1352,60 +1627,50 @@ public class RemoteUtils {
 			boolean result = false;
 			int counter = 0;
 
-			result = syncUser();
-			if (SC != null)
-				SC.onSyncProgress(++counter, result);
+			// result = syncUser();
+			// if (SC != null)
+			// SC.onSyncProgress(++counter, result);
+			//
+			// result = syncDoctor();
+			// if (SC != null)
+			// SC.onSyncProgress(++counter, result);
+			//
+			// result = syncClinic();
+			// if (SC != null)
+			// SC.onSyncProgress(++counter, result);
+			//
+			// result = syncOfficer();
+			// if (SC != null)
+			// SC.onSyncProgress(++counter, result);
+			//
+			// result = syncPatient();
+			// if (SC != null)
+			// SC.onSyncProgress(++counter, result);
+			//
+			// result = syncPregnancy();
+			// if (SC != null)
+			// SC.onSyncProgress(++counter, result);
+			//
+			// result = syncPhoto();
+			// if (SC != null)
+			// SC.onSyncProgress(++counter, result);
+			//
+			// result = syncServe();
+			// if (SC != null)
+			// SC.onSyncProgress(++counter, result);
+			//
+			// result = syncWorksOn();
+			// if (SC != null)
+			// SC.onSyncProgress(++counter, result);
+			//
+			// result = syncComment();
+			// if (SC != null)
+			// SC.onSyncProgress(++counter, result);
+			//
+			// result = syncValidation();
+			// if (SC != null)
+			// SC.onSyncProgress(++counter, result);
 
-			result = syncDoctor();
-			if (SC != null)
-				SC.onSyncProgress(++counter, result);
-
-			result = syncClinic();
-			if (SC != null)
-				SC.onSyncProgress(++counter, result);
-
-			result = syncOfficer();
-			if (SC != null)
-				SC.onSyncProgress(++counter, result);
-
-			result = syncPatient();
-			if (SC != null)
-				SC.onSyncProgress(++counter, result);
-
-			result = syncPregnancy();
-			if (SC != null)
-				SC.onSyncProgress(++counter, result);
-
-			result = syncPhoto();
-			if (SC != null)
-				SC.onSyncProgress(++counter, result);
-
-			result = syncServe();
-			if (SC != null)
-				SC.onSyncProgress(++counter, result);
-
-			result = syncWorksOn();
-			if (SC != null)
-				SC.onSyncProgress(++counter, result);
-
-			result = syncComment();
-			if (SC != null)
-				SC.onSyncProgress(++counter, result);
-
-			result = syncValidation();
-			if (SC != null)
-				SC.onSyncProgress(++counter, result);
-
-			return null;
-		}
-	}
-
-	private static class DownloadWebPageTask2 extends
-			AsyncTask<Void, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			uploadPhoto();
 			return null;
 		}
 	}
@@ -1414,22 +1679,23 @@ public class RemoteUtils {
 		public abstract void onSyncProgress(int i, boolean result);
 	}
 
-	private static class DownloadImageTask extends
-			AsyncTask<Integer, Void, Void> {
+	private static class DownloadImageTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
-		protected Void doInBackground(Integer... params) {
-			int i = params[0];
-			long currentTime = DateUtils.getCurrentLong();
-			String basePath = Environment.getExternalStorageDirectory()
-					+ File.separator + "USG Apps" + File.separator + "USG"
-					+ File.separator + "new_" + currentTime + ".jpg";
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			syncPhotoFile();
+			return null;
+		}
 
-			if (i == 0) {
-				downloadPhoto(BASE_URL + DOWNLOADUSER_SUB_URL, basePath);
-			} else {
-				downloadPhoto(BASE_URL + DOWNLOADUSER_SUB_URL, basePath);
-			}
+	}
+
+	private static class LoginTask extends AsyncTask<String, Void, Void> {
+
+		@Override
+		protected Void doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			login(params[0], params[1]);
 			return null;
 		}
 

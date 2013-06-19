@@ -127,6 +127,13 @@ public class Photo extends USGTableEntry implements Comparator<Photo> {
 		return noPhoto;
 	}
 	
+	
+	public int getServerId() {
+		return serverId;
+	}
+	public void setServerId(int serverId) {
+		this.serverId = serverId;
+	}
 	public long getAutoDateString() {
 		return autoDateLong;
 	}
@@ -210,6 +217,35 @@ public class Photo extends USGTableEntry implements Comparator<Photo> {
 	public long getServerPhotoTimestamp() {
 		return serverPhotoTimestamp;
 	}
+	
+	public void setServerPhotoTimestamp(long serverPhotoTimestamp) {
+		this.serverPhotoTimestamp = serverPhotoTimestamp;
+	}
+	
+	public String getIdPetugas() {
+		return idPetugas;
+	}
+	public void setIdPetugas(String idPetugas) {
+		this.idPetugas = idPetugas;
+	}
+	public String getServerId2() {
+		return serverId2;
+	}
+	public void setServerId2(String serverId2) {
+		this.serverId2 = serverId2;
+	}
+	public int getServerId3() {
+		return serverId3;
+	}
+	public void setServerId3(int serverId3) {
+		this.serverId3 = serverId3;
+	}
+	public String getServerId4() {
+		return serverId4;
+	}
+	public void setServerId4(String serverId4) {
+		this.serverId4 = serverId4;
+	}
 	@Override
 	public String[] getPrimaryArgs() {
 		return new String[]{""+noPhoto,""+idPasien, ""+noKandungan};
@@ -238,6 +274,7 @@ public class Photo extends USGTableEntry implements Comparator<Photo> {
 		idPasien = serverId2;
 		noKandungan = serverId3;
 		idPetugas = serverId4;
+		filename = "-1";
 		setDirty(false);
 	}
 	@Override

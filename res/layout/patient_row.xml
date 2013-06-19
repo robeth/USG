@@ -55,6 +55,55 @@
             android:text="TextView"
             android:textColor="#FF777777"
             android:textStyle="italic" />
+        
+        <LinearLayout 
+            android:id="@+id/new_message_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/patient_last_date"
+            android:layout_alignRight="@id/patient_last_date"
+            android:orientation="horizontal"
+            android:background="@drawable/green_round_rect">
+            <TextView 
+                android:id="@+id/new_message_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:textColor="#FFFFFFFF"/>
+            <ImageView 
+                android:id="@+id/new_message_icon"
+                android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:adjustViewBounds="true"
+	            android:maxHeight="20dp"
+	            android:maxWidth="20dp"
+	            android:src="@drawable/bright_content_read"/>
+        </LinearLayout>
+        
+        <LinearLayout 
+            android:id="@+id/new_validation_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/patient_last_date"
+            android:layout_toLeftOf="@id/new_message_box"
+            android:orientation="horizontal"
+			android:layout_marginRight="10dp"
+            android:background="@drawable/orange_round_rect">
+            <TextView 
+                android:id="@+id/new_validation_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:textColor="#FFFFFFFF"/>
+            <ImageView 
+                android:id="@+id/new_validation_icon"
+                android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:adjustViewBounds="true"
+	            android:maxHeight="20dp"
+	            android:maxWidth="20dp"
+	            android:src="@drawable/bright_navigation_accept"/>
+        </LinearLayout>
     </RelativeLayout>
 
 </FrameLayout>

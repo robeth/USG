@@ -198,9 +198,13 @@ public class PatientUSGFragment extends SherlockFragment {
 	}
 
 	public void popUpUSGDialog() {
+		if(kms.isEmpty()){
+			Toast.makeText(this.getActivity(), "Please add pregnancy data first. No pregnancy data exists.", Toast.LENGTH_SHORT).show();
+			return;
+		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(
 				this.getActivity());
-		builder.setTitle("Select Color Mode");
+		builder.setTitle("Pilih Kandungan");
 
 		ListView modeList = new ListView(this.getActivity());
 		String[] stringArray = new String[kms.size()];

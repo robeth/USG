@@ -12,7 +12,8 @@ public class PatientConverter {
 			return null;
 		c.moveToFirst();
 		Patient p = new Patient(c.getString(11), c.getInt(7) == 1, c.getInt(8) == 1, c.getLong(9), c.getLong(10), 
-				c.getString(0), c.getString(1), c.getString(2),c.getString(3), c.getLong(4), c.getString(5), c.getString(6));
+				c.getString(0), c.getString(1), c.getString(2),c.getString(3), c.getLong(4), c.getString(5), c.getString(6), 
+				c.getLong(12), c.getLong(13));
 		c.close();
 		return p;
 	}
@@ -22,7 +23,8 @@ public class PatientConverter {
 		ArrayList<Patient> ps = new ArrayList<Patient>();
 		while(!c.isAfterLast()){
 			Patient p = new Patient(c.getString(11), c.getInt(7) == 1, c.getInt(8) == 1, c.getLong(9), c.getLong(10), 
-					c.getString(0), c.getString(1), c.getString(2),c.getString(3), c.getLong(4), c.getString(5), c.getString(6));
+					c.getString(0), c.getString(1), c.getString(2),c.getString(3), c.getLong(4), c.getString(5), c.getString(6),
+					c.getLong(12), c.getLong(13));
 			ps.add(p);
 			c.moveToNext();
 		}

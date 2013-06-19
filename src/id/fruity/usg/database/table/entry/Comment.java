@@ -111,9 +111,15 @@ public class Comment extends USGTableEntry {
 	}
 	
 	
-
+	
 	
 
+	public String getServerId3() {
+		return serverId3;
+	}
+	public void setServerId3(String serverId3) {
+		this.serverId3 = serverId3;
+	}
 	public String getIdPasien() {
 		return idPasien;
 	}

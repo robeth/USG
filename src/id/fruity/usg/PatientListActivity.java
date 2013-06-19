@@ -28,13 +28,12 @@ import com.actionbarsherlock.widget.SearchView;
 public class PatientListActivity extends SherlockFragmentActivity {
 	private static final String SYNC_TITLE = "Sync Now",
 			ADD_PATIENT_TITLE = "Add Patient", SORT_CHAR_TITLE = "Sort A-Z",
-			SORT_DATE_TITLE = "Urut tanggal", INFO_TITLE = "Info";
+			SORT_DATE_TITLE = "Urut tanggal", INFO_TITLE = "Info", LOGOUT = "Logout";
 
 	private int fragmentId;
 	private Fragment listFragment;
 	private USGDBHelper helper;
 	private int clinicId;
-	private int currentId;
 	private String userId;
 	private boolean isDoctor;
 	private User u;
@@ -49,21 +48,22 @@ public class PatientListActivity extends SherlockFragmentActivity {
 		Synchonization.A = this;
 
 		Bundle b = getIntent().getExtras();
-		String username = "user6";// b.getString("username");
+		String username = b.getString("username");
 
 		helper = USGDBHelper.getInstance(this);
 		helper.open();
+		Log.d("HOmescreen", "Check:"+helper.isUserExist(username));
+		if(!helper.isUserExist(username)){
+			logout();
+			return;
+		}
 		userId = helper.getIdOfUsername(username);
 		isDoctor = helper.isDoctor(userId);
-		if (isDoctor) {
-			currentId = helper.getDokterId(userId);
-		} else {
-			currentId = helper.getPetugasId(userId);
-		}
-
+		
 		// Fix header
 		long lastSync = Preference.getLastSync();
 		String lastSyncString = DateUtils.getStringOfCalendarFromLong(lastSync);
+		Log.d("HOmescreen", "Check Last SYnc:"+lastSync);
 		String title = "";
 		if (isDoctor) {
 			u = UserConverter.convert(helper.getUser(userId));
@@ -78,7 +78,11 @@ public class PatientListActivity extends SherlockFragmentActivity {
 		getSupportActionBar().setNavigationMode(
 				ActionBar.NAVIGATION_MODE_STANDARD);
 		getSupportActionBar().setIcon(R.drawable.puskesmas_icon);
-		getSupportActionBar().setSubtitle("Last sync: " + lastSyncString);
+		if(lastSync == -1){
+			getSupportActionBar().setSubtitle("Please sync");
+		} else {
+			getSupportActionBar().setSubtitle(lastSyncString);
+		}
 		getSupportActionBar().setTitle(title);
 
 		setContentView(R.layout.patients);
@@ -108,7 +112,7 @@ public class PatientListActivity extends SherlockFragmentActivity {
 
 		menu.add("Search").setIcon(R.drawable.action_search)
 				.setActionView(searchView)
-				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
 		SubMenu subMenu1 = menu.addSubMenu("Action Items");
 		subMenu1.add(SYNC_TITLE).setIcon(R.drawable.navigation_refresh);
@@ -121,13 +125,23 @@ public class PatientListActivity extends SherlockFragmentActivity {
 		subMenu1.add(SORT_DATE_TITLE).setIcon(
 				R.drawable.collections_go_to_today);
 		subMenu1.add(INFO_TITLE).setIcon(R.drawable.action_about);
+		subMenu1.add(LOGOUT).setIcon(R.drawable.content_discard);
 
 		MenuItem subMenu1Item = subMenu1.getItem();
 		subMenu1Item.setIcon(R.drawable.device_access_storage);
-		subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
-				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
 		return true;
+	}
+	
+	private void logout(){
+		Preference.setLastUsername("-1");
+		Preference.setLoggedIn(false);
+		Preference.setLastSync(-1);
+		Intent i = new Intent(this, LoginActivity.class);
+		startActivity(i);
+		finish();
+		return;
 	}
 
 	@Override
@@ -148,9 +162,11 @@ public class PatientListActivity extends SherlockFragmentActivity {
 			helper.test();
 			helper.close();
 		} else if (item.getTitle().equals(SORT_CHAR_TITLE)){
-			RemoteUtils.startAsyn2(this);
+			
 		} else if (item.getTitle().equals(SORT_DATE_TITLE)){
-			RemoteUtils.startAsyn3(this);
+			RemoteUtils.startPhotoSync(this);
+		} else if (item.getTitle().equals(LOGOUT)){
+			logout();
 		}
 		return true;
 	}
@@ -179,7 +195,7 @@ public class PatientListActivity extends SherlockFragmentActivity {
 					.setMessage("Loading application View, please wait...");
 			progressDialog.setCancelable(false);
 			progressDialog.setIndeterminate(false);
-			progressDialog.setMax(11);
+			progressDialog.setMax(12);
 			progressDialog.setProgress(0);
 			progressDialog.show();
 		}
@@ -191,38 +207,44 @@ public class PatientListActivity extends SherlockFragmentActivity {
 			int counter = 0;
 			try {
 				synchronized (this) {
-					result = RemoteUtils.syncUser();
+					long timestamp = DateUtils.getCurrentLong();
+					result = RemoteUtils.syncUser(timestamp);
 					publishProgress(++counter);
 					this.wait(500);
-//					result = RemoteUtils.syncDoctor();
-//					publishProgress(++counter);
-//					this.wait(500);
-//					result = RemoteUtils.syncClinic();
-//					publishProgress(++counter);
-//					this.wait(500);
-//					result = RemoteUtils.syncOfficer();
-//					publishProgress(++counter);
-//					this.wait(500);
-//					result = RemoteUtils.syncPatient();
-//					publishProgress(++counter);
-//					this.wait(500);
-//					result = RemoteUtils.syncPregnancy();
-//					publishProgress(++counter);
-//					this.wait(500);
-//					result = RemoteUtils.syncPhoto();
-//					publishProgress(++counter);
-//					this.wait(500);
-//					result = RemoteUtils.syncServe();
-//					publishProgress(++counter);
-//					this.wait(500);
-//					result = RemoteUtils.syncWorksOn();
-//					publishProgress(++counter);
-//					this.wait(500);
-//					result = RemoteUtils.syncComment();
-//					publishProgress(++counter);
-//					this.wait(500);
-//					result = RemoteUtils.syncValidation();
-//					publishProgress(++counter);
+					result = RemoteUtils.syncDoctor(timestamp);
+					publishProgress(++counter);
+					this.wait(500);
+					result = RemoteUtils.syncClinic(timestamp);
+					publishProgress(++counter);
+					this.wait(500);
+					result = RemoteUtils.syncOfficer(timestamp);
+					publishProgress(++counter);
+					this.wait(500);
+					result = RemoteUtils.syncPatient(timestamp);
+					publishProgress(++counter);
+					this.wait(500);
+					result = RemoteUtils.syncPregnancy(timestamp);
+					publishProgress(++counter);
+					this.wait(500);
+					result = RemoteUtils.syncPhoto(timestamp);
+					publishProgress(++counter);
+					this.wait(500);
+					result = RemoteUtils.syncServe(timestamp);
+					publishProgress(++counter);
+					this.wait(500);
+					result = RemoteUtils.syncWorksOn(timestamp);
+					publishProgress(++counter);
+					this.wait(500);
+					result = RemoteUtils.syncComment(timestamp);
+					publishProgress(++counter);
+					this.wait(500);
+					result = RemoteUtils.syncValidation(timestamp);
+					publishProgress(++counter);
+					RemoteUtils.syncPhotoFile();
+					publishProgress(++counter);
+					Preference.setLastSync(timestamp);
+					Log.d("Timestamp", "::"+timestamp+"---"+Preference.getLastSync());
+					
 				}
 				
 			} catch (InterruptedException e) {
@@ -239,7 +261,12 @@ public class PatientListActivity extends SherlockFragmentActivity {
 		@Override
 		protected void onPostExecute(Void result) {
 			progressDialog.dismiss();
+			refreshFragmentData();
 		}
+	}
+	
+	private void refreshFragmentData(){
+		((PatientListFragment )listFragment).reloadData();
 	}
 
 }

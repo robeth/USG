@@ -3,18 +3,17 @@ package id.fruity.usg;
 import id.fruity.usg.database.table.entry.Photo;
 import id.fruity.usg.model.KandunganModel;
 import id.fruity.usg.util.DateUtils;
+import id.fruity.usg.util.SDUtils;
 
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class UsgAdapter extends BaseExpandableListAdapter {
@@ -50,11 +49,16 @@ public class UsgAdapter extends BaseExpandableListAdapter {
 	public View getChildView(int groupPosition, final int childPosition,
 			boolean isLastChild, View convertView, ViewGroup parent) {
 		TextView text = null;
+		ImageView i = null;
 		if (convertView == null) {
 			convertView = minflater.inflate(R.layout.usg_child_row, null);
 		}
+		Photo temp = groupItem.get(groupPosition).getFotos().get(childPosition);
 		text = (TextView) convertView.findViewById(R.id.usg_date);
-		text.setText(DateUtils.getStringOfCalendarFromLong(groupItem.get(groupPosition).getFotos().get(childPosition).getCreateTimestampLong()));
+		i = (ImageView) convertView.findViewById(R.id.usg_image);
+		text.setText(DateUtils.getStringOfCalendarFromLong(temp.getCreateTimestampLong()));
+		Drawable d = SDUtils.getDrawable(activity, SDUtils.getSmallPhotoBitmap(SDUtils.getAbsolutePath(temp.getFilename())));
+		i.setImageDrawable(d);
 //		 convertView.setClickable(true)l
 //		convertView.setLongClickable(true);
 		return convertView;

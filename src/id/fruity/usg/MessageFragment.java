@@ -29,7 +29,8 @@ public class MessageFragment extends SherlockFragment {
 	private Button sendButton;
 	private USGDBHelper helper;
 	private String patientId;
-	private String petugasId;
+	private String userId;
+	private boolean isDoctor;
 	private Patient p;
 	private ArrayList<KomentarModel> kms;
 	@Override
@@ -37,8 +38,9 @@ public class MessageFragment extends SherlockFragment {
         super.onCreate(savedInstanceState);
         Bundle b = getArguments();
         patientId = b.getString("patientId");
-        petugasId = b.getString("userId");
-        Log.d("Message Fragment", "Patient ID:"+patientId+" - PetugasId:"+petugasId);
+        userId = b.getString("userId");
+        isDoctor = b.getBoolean("isDoctor");
+        Log.d("Message Fragment", "Patient ID:"+patientId+" - PetugasId:"+userId);
         
         helper = USGDBHelper.getInstance(getActivity());
         helper.open();
@@ -92,7 +94,7 @@ public class MessageFragment extends SherlockFragment {
 			Long currentMillis = DateUtils.getCurrentLong();
 			String content = inputMessage.getText().toString();
 			int lastMessageIndex = helper.getLastIndexofKomentar(patientId);
-			Comment k = new Comment(-1, true, true, currentMillis, currentMillis, lastMessageIndex+1, "-1", ""+patientId, ""+petugasId, false, content, false, "-1", "-1", "-1");
+			Comment k = new Comment(-1, true, true, currentMillis, currentMillis, lastMessageIndex+1, (isDoctor)?userId:"-1", ""+patientId, (!isDoctor)?userId:"-1", isDoctor, content, false, "-1", "-1", "-1");
 			helper.insertComment(k);
 			helper.close();
 			

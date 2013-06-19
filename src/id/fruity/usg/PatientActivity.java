@@ -3,6 +3,7 @@ package id.fruity.usg;
 import id.fruity.usg.database.USGDBHelper;
 import id.fruity.usg.database.table.entry.Photo;
 import id.fruity.usg.util.DateUtils;
+import id.fruity.usg.util.SDUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,6 +47,7 @@ public class PatientActivity extends SherlockFragmentActivity implements
 	private String userId;
 	private boolean isDoctor;
 	private USGDBHelper helper;
+	private String tempRealFileName = "";
 
 	// Get USG Image Properties
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -192,7 +194,15 @@ public class PatientActivity extends SherlockFragmentActivity implements
 		} else if (currentFragmentIndex == STAT_MODE) {
 
 		} else if (currentFragmentIndex == MESSAGE_MODE) {
-
+			if(item.getTitle().equals("Mark As Read")){
+				helper.open();
+				if(isDoctor){
+					helper.markMessagesAsDoctor(patientId, userId);
+				} else {
+					helper.markMessagesAsOfficer(patientId);
+				}
+				helper.close();
+			}
 		}
 		return true;
 	}
@@ -221,7 +231,7 @@ public class PatientActivity extends SherlockFragmentActivity implements
 					Toast.LENGTH_SHORT).show();
 			if (currentFragment instanceof PatientProfileFragment) {
 				((PatientProfileFragment) currentFragment).notifyHasEditted();
-				
+
 			}
 		}
 
@@ -274,18 +284,18 @@ public class PatientActivity extends SherlockFragmentActivity implements
 				int iPregnancyId = resB.getInt("pregnancyId");
 				Toast.makeText(this, "Image chosen:" + imageId,
 						Toast.LENGTH_SHORT).show();
-				
-				boolean isSdPresent = android.os.Environment.getExternalStorageState().equals(
-				        android.os.Environment.MEDIA_MOUNTED);
+
+				boolean isSdPresent = android.os.Environment
+						.getExternalStorageState().equals(
+								android.os.Environment.MEDIA_MOUNTED);
 				String filename = "-1";
 				if (isSdPresent) {
-					filename = Environment.getExternalStorageDirectory().getAbsolutePath() +
-							"USG Apps" + File.separator + "USG";
 					File f = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 					saveToSdCard(f.getAbsolutePath(), imageIdRes);
-					
+
 				}
-				((PatientUSGFragment) currentFragment).notifyImageCaptured(filename);
+				((PatientUSGFragment) currentFragment)
+						.notifyImageCaptured(tempRealFileName);
 			}
 		}
 	}
@@ -297,50 +307,54 @@ public class PatientActivity extends SherlockFragmentActivity implements
 
 	/** Create a File for saving an image or video */
 	private File getOutputMediaFile(int type) {
-		// To be safe, you should check that the SDCard is mounted
-		// using Environment.getExternalStorageState() before doing this.
-
-		File mediaStorageDir = new File(
-				Environment.getExternalStorageDirectory(),
-				"USG Apps" + File.separator + "USG");
-		// This location works best if you want the created images to be shared
-		// between applications and persist after your app has been uninstalled.
-
-		// Create the storage directory if it does not exist
-		if (!mediaStorageDir.exists()) {
-			if (!mediaStorageDir.mkdirs()) {
-				Log.d("MyCameraApp", "failed to create directory");
-				return null;
-			}
-		}
-
-		// Create a media file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
-				.format(new Date());
+		// File mediaStorageDir = new File(
+		// Environment.getExternalStorageDirectory(),
+		// "USG Apps" + File.separator + "USG");
+		//
+		// if (!mediaStorageDir.exists()) {
+		// if (!mediaStorageDir.mkdirs()) {
+		// Log.d("MyCameraApp", "failed to create directory");
+		// return null;
+		// }
+		// }
+		//
+		// // Create a media file name
+		// String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+		// .format(new Date());
+		// File mediaFile;
+		// if (type == MEDIA_TYPE_IMAGE) {
+		// mediaFile = new File(mediaStorageDir.getPath() + File.separator
+		// + "USG_" + timeStamp + ".jpg");
+		// } else {
+		// return null;
+		// }
+		// imageFile = mediaFile;
+		// return mediaFile;
+		File mediaStorageDir = new File(SDUtils.getDefaultPath());
+		String timeStamp = DateUtils.getSimpleCurrentString();
 		File mediaFile;
 		if (type == MEDIA_TYPE_IMAGE) {
-			mediaFile = new File(mediaStorageDir.getPath() + File.separator
-					+ "USG_" + timeStamp + ".jpg");
+			tempRealFileName = "usg_" + timeStamp + ".jpg";
+			mediaFile = new File(mediaStorageDir.getPath() + File.separator+tempRealFileName);
 		} else {
 			return null;
 		}
 		imageFile = mediaFile;
 		return mediaFile;
 	}
-	
-	private void saveToSdCard(String filename, int imageIdRes){
+
+	private void saveToSdCard(String filename, int imageIdRes) {
 		BitmapFactory.Options bmOptions;
 		bmOptions = new BitmapFactory.Options();
 		bmOptions.inSampleSize = 1;
-		Bitmap bbicon = BitmapFactory.decodeResource(
-				getResources(), imageIdRes);
+		Bitmap bbicon = BitmapFactory
+				.decodeResource(getResources(), imageIdRes);
 
 		File file = new File(filename);
 
 		try {
 			FileOutputStream outStream = new FileOutputStream(file);
-			bbicon.compress(Bitmap.CompressFormat.PNG, 100,
-					outStream);
+			bbicon.compress(Bitmap.CompressFormat.PNG, 100, outStream);
 			outStream.flush();
 			outStream.close();
 

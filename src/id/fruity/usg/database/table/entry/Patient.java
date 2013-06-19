@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import id.fruity.usg.database.table.PatientTable;
+import id.fruity.usg.database.table.UserTable;
 import android.content.ContentValues;
 
 
@@ -32,9 +33,16 @@ public class Patient extends USGTableEntry{
 	@Expose
 	@SerializedName("ktp")
 	private String serverId;
+	@Expose
+	@SerializedName("local_photo_timestamp")
+	private long photoTimestamp;
+	@Expose
+	@SerializedName("photo_timestamp")
+	private long serverPhotoTimestamp;
 	public Patient(String serverId, boolean isDirty, boolean isActive,
 			long modifyDate, long createDate, String idPasien, String name,
-			String address, String phone, long birthdate, String filename, String description) {
+			String address, String phone, long birthdate, String filename, String description,
+			long photoTimestamp, long serverPhotoTimestamp) {
 		super(isDirty, isActive, modifyDate, createDate);
 		this.idPasien = idPasien;
 		this.name = name;
@@ -44,6 +52,8 @@ public class Patient extends USGTableEntry{
 		this.filename = filename;
 		this.description = description;
 		this.serverId = serverId;
+		this.photoTimestamp = photoTimestamp;
+		this.serverPhotoTimestamp = serverPhotoTimestamp;
 	}
 	@Override
 	public ContentValues getContentValues() {
@@ -55,6 +65,8 @@ public class Patient extends USGTableEntry{
 		cv.put(PatientTable.C_BIRTHDATE, birthdate);
 		cv.put(PatientTable.C_DESCRIPTION, description);
 		cv.put(PatientTable.C_FILENAME, filename);
+		cv.put(UserTable.C_PHOTOTIMESTAMP, photoTimestamp);
+		cv.put(UserTable.C_SERVERPHOTOTIMESTAMP, serverPhotoTimestamp);
 		
 		cv.put(PatientTable.C_DIRTY, isDirty()?1:0);
 		cv.put(PatientTable.C_ISACTIVE, isActive()?1:0);
@@ -100,6 +112,25 @@ public class Patient extends USGTableEntry{
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
+	
+	public String getIdPasien() {
+		return idPasien;
+	}
+	public void setIdPasien(String idPasien) {
+		this.idPasien = idPasien;
+	}
+	public long getPhotoTimestamp() {
+		return photoTimestamp;
+	}
+	public void setPhotoTimestamp(long photoTimestamp) {
+		this.photoTimestamp = photoTimestamp;
+	}
+	public long getServerPhotoTimestamp() {
+		return serverPhotoTimestamp;
+	}
+	public void setServerPhotoTimestamp(long serverPhotoTimestamp) {
+		this.serverPhotoTimestamp = serverPhotoTimestamp;
+	}
 	@Override
 	public String[] getPrimaryArgs() {
 		return new String[]{""+idPasien};
@@ -128,6 +159,7 @@ public class Patient extends USGTableEntry{
 		this.phone = other.getPhone();
 		this.birthdate = other.getBirthdate();
 		this.description = other.getDescription();
+		this.serverPhotoTimestamp = other.getPhotoTimestamp();
 		setDirty(false);
 		setActive(other.isActive());
 		setModifyTimestampLong(other.getModifyTimestampLong());

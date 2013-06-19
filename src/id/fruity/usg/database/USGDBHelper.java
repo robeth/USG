@@ -23,6 +23,7 @@ import id.fruity.usg.database.table.entry.Clinic;
 import id.fruity.usg.database.table.entry.Photo;
 import id.fruity.usg.database.table.entry.User;
 import id.fruity.usg.database.table.entry.Validation;
+import id.fruity.usg.util.DateUtils;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -172,11 +173,11 @@ public class USGDBHelper extends SQLiteOpenHelper {
 		petugasTable.insert(database, pe4);
 		petugasTable.insert(database, pe5);
 		
-		Patient pa1 = new Patient("-1", true, true, 82233213123L, 82233213123L, "ktp101", "Pasien 1", "Alamat Pasien 1", "+62", 82233213123L,"a.jpg","Deskripsi Pasien 1");
-		Patient pa2 = new Patient("-1", true, true, 82233213123L, 82233213123L, "ktp102", "Pasien 2", "Alamat Pasien 2", "+62", 82233213123L,"a.jpg","Deskripsi Pasien 2");
-		Patient pa3 = new Patient("-1", true, true, 82233213123L, 82233213123L, "ktp103", "Pasien 3", "Alamat Pasien 3", "+62", 82233213123L,"a.jpg","Deskripsi Pasien 3");
-		Patient pa4 = new Patient("-1", true, true, 82233213123L, 82233213123L, "ktp104", "Pasien 4", "Alamat Pasien 4", "+62", 82233213123L,"a.jpg","Deskripsi Pasien 4");
-		Patient pa5 = new Patient("-1", true, true, 82233213123L, 82233213123L, "ktp105", "Pasien 5", "Alamat Pasien 5", "+62", 82233213123L, "a.jpg","Deskripsi Pasien 5");
+		Patient pa1 = new Patient("-1", true, true, 82233213123L, 82233213123L, "ktp101", "Pasien 1", "Alamat Pasien 1", "+62", 82233213123L,"a.jpg","Deskripsi Pasien 1",-1,-1);
+		Patient pa2 = new Patient("-1", true, true, 82233213123L, 82233213123L, "ktp102", "Pasien 2", "Alamat Pasien 2", "+62", 82233213123L,"a.jpg","Deskripsi Pasien 2",-1,-1);
+		Patient pa3 = new Patient("-1", true, true, 82233213123L, 82233213123L, "ktp103", "Pasien 3", "Alamat Pasien 3", "+62", 82233213123L,"a.jpg","Deskripsi Pasien 3",-1,-1);
+		Patient pa4 = new Patient("-1", true, true, 82233213123L, 82233213123L, "ktp104", "Pasien 4", "Alamat Pasien 4", "+62", 82233213123L,"a.jpg","Deskripsi Pasien 4",-1,-1);
+		Patient pa5 = new Patient("-1", true, true, 82233213123L, 82233213123L, "ktp105", "Pasien 5", "Alamat Pasien 5", "+62", 82233213123L, "a.jpg","Deskripsi Pasien 5",-1,-1);
 		pasienTable.insert(database, pa1);
 		pasienTable.insert(database, pa2);
 		pasienTable.insert(database, pa3);
@@ -369,7 +370,7 @@ public class USGDBHelper extends SQLiteOpenHelper {
 		return database.rawQuery("select a."+PatientTable.C_ID+", a."+PatientTable.C_NAME+", b.totalfoto, b.terakhir, c.totalpesanbaru, d.totalvalidasibaru"
 				+ " from (select x."+ PatientTable.C_ID+ ", x."+PatientTable.C_NAME+" from "+PatientTable.TABLE_NAME+" x, "+ServeTable.TABLE_NAME+" y,"+ClinicTable.TABLE_NAME+" z where x."+PatientTable.C_ID+" = y."+ServeTable.C_ID_PASIEN+" and y."+ServeTable.C_ID_PUSKESMAS+" = z."+ClinicTable.C_ID+" and z."+ClinicTable.C_ID+" =?) a left outer join "
 				+ "(select "+PhotoTable.C_ID_PASIEN+" as id_pasien, count(*) as totalfoto ,max("+PhotoTable.C_CREATESTAMP+") as terakhir from "+PhotoTable.TABLE_NAME+" group by "+PhotoTable.C_ID_PASIEN+")b on a."+PatientTable.C_ID+" = b.id_pasien left outer join "
-				+ "(select "+CommentTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalpesanbaru from "+CommentTable.TABLE_NAME+" where "+CommentTable.C_HASSEEN+" = 0 group by "+CommentTable.C_ID_USGPASIEN+") c on a."+PatientTable.C_ID+" = c.id_pasien left outer join "
+				+ "(select "+CommentTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalpesanbaru from "+CommentTable.TABLE_NAME+" where "+CommentTable.C_HASSEEN+" = 0 and "+CommentTable.C_FROM_DOCTOR+"=1 group by "+CommentTable.C_ID_USGPASIEN+") c on a."+PatientTable.C_ID+" = c.id_pasien left outer join "
 				+ "(select "+ValidationTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalvalidasibaru from "+ValidationTable.TABLE_NAME+" where "+ValidationTable.C_HASSEEN+" = 0 group by "+ValidationTable.C_ID_USGPASIEN+") d on a."+PatientTable.C_ID+" = d.id_pasien", new String[]{""+puskesmasId});
 	}
 	
@@ -377,8 +378,8 @@ public class USGDBHelper extends SQLiteOpenHelper {
 		return database.rawQuery("select distinct(a."+PatientTable.C_ID+"), a."+PatientTable.C_NAME+", b.totalfoto, b.terakhir, c.totalpesanbaru, d.totalvalidasibaru"
 				+ " from (select x."+ PatientTable.C_ID+ ", x."+PatientTable.C_NAME+" from "+PatientTable.TABLE_NAME+" x, "+ServeTable.TABLE_NAME+" y,"+ClinicTable.TABLE_NAME+" z where x."+PatientTable.C_ID+" = y."+ServeTable.C_ID_PASIEN+" and y."+ServeTable.C_ID_PUSKESMAS+" = z."+ClinicTable.C_ID+" and z."+ClinicTable.C_ID+" in (select CC."+ClinicTable.C_ID+" from "+ClinicTable.TABLE_NAME+" CC, "+DoctorTable.TABLE_NAME+" DD, "+WorksOnTable.TABLE_NAME+" WW where CC."+ClinicTable.C_ID+" = WW."+WorksOnTable.C_ID_PUSKESMAS+" and DD."+DoctorTable.C_ID_USER+" = WW."+WorksOnTable.C_ID_DOKTER+" and DD."+DoctorTable.C_ID_USER+"=?)) a left outer join "
 				+ "(select "+PhotoTable.C_ID_PASIEN+" as id_pasien, count(*) as totalfoto ,max("+PhotoTable.C_CREATESTAMP+") as terakhir from "+PhotoTable.TABLE_NAME+" group by "+PhotoTable.C_ID_PASIEN+")b on a."+PatientTable.C_ID+" = b.id_pasien left outer join "
-				+ "(select "+CommentTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalpesanbaru from "+CommentTable.TABLE_NAME+" where "+CommentTable.C_HASSEEN+" = 0 group by "+CommentTable.C_ID_USGPASIEN+") c on a."+PatientTable.C_ID+" = c.id_pasien left outer join "
-				+ "(select "+ValidationTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalvalidasibaru from "+ValidationTable.TABLE_NAME+" where "+ValidationTable.C_HASSEEN+" = 0 group by "+ValidationTable.C_ID_USGPASIEN+") d on a."+PatientTable.C_ID+" = d.id_pasien", new String[]{ktpDoctor});
+				+ "(select "+CommentTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalpesanbaru from "+CommentTable.TABLE_NAME+" where "+CommentTable.C_HASSEEN+" = 0 and "+CommentTable.C_ID_DOKTER+" <> ? "+" group by "+CommentTable.C_ID_USGPASIEN+") c on a."+PatientTable.C_ID+" = c.id_pasien left outer join "
+				+ "(select "+ValidationTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalvalidasibaru from "+ValidationTable.TABLE_NAME+" where "+ValidationTable.C_HASSEEN+" = 0 group by "+ValidationTable.C_ID_USGPASIEN+") d on a."+PatientTable.C_ID+" = d.id_pasien", new String[]{ktpDoctor, ktpDoctor});
 	}
 	
 
@@ -600,48 +601,72 @@ public class USGDBHelper extends SQLiteOpenHelper {
 		return komentarTable.getCursorOfNewItems(database, new String[]{"-1","-1","-1","-1",""+lastSync});
 	}
 	
+	public Cursor getExpiredPatientPhoto(){
+		return database.query(PatientTable.TABLE_NAME, pasienTable.getAllColumns(), 
+				PatientTable.C_PHOTOTIMESTAMP+" < "+PatientTable.C_SERVERPHOTOTIMESTAMP+" and "+PatientTable.C_ISACTIVE+"=1", null, 
+				null, null, null);
+	}
+	
+	public Cursor getExpiredUSGPhoto(){
+		return database.query(PhotoTable.TABLE_NAME, usgFotoTable.getAllColumns(), 
+				PhotoTable.C_PHOTOTIMESTAMP+" <"+PhotoTable.C_SERVERPHOTOTIMESTAMP+" and "+PhotoTable.C_ISACTIVE+"=1", null, 
+				null, null, null);
+	}
+	
+	public Cursor getFreshPatientPhoto(){
+		return database.query(PatientTable.TABLE_NAME, pasienTable.getAllColumns(), 
+				PatientTable.C_PHOTOTIMESTAMP+" > "+PatientTable.C_SERVERPHOTOTIMESTAMP+" and "+PatientTable.C_ISACTIVE+"=1", null, 
+				null, null, null);
+	}
+	
+	public Cursor getFreshUSGPhoto(){
+		return database.query(PhotoTable.TABLE_NAME, usgFotoTable.getAllColumns(), 
+				PhotoTable.C_PHOTOTIMESTAMP+" > "+PhotoTable.C_SERVERPHOTOTIMESTAMP+" and "+PhotoTable.C_ISACTIVE+"=1", null, 
+				null, null, null);
+	}
+	
 	public Cursor getUpdateUser(long lastSync){
-		return userTable.getCursorOfNewItems(database, new String[]{"-1",""+lastSync});
+		return userTable.getCursorOfUpdateItems(database, new String[]{"-1",""+lastSync});
 	}
 	
 	public Cursor getUpdatePatient(long lastSync){
-		return pasienTable.getCursorOfNewItems(database, new String[]{"-1",""+lastSync});
+		return pasienTable.getCursorOfUpdateItems(database, new String[]{"-1",""+lastSync});
 	}
 	
 	public Cursor getUpdateDoctor(long lastSync){
-		return dokterTable.getCursorOfNewItems(database, new String[]{"-1",""+lastSync});
+		return dokterTable.getCursorOfUpdateItems(database, new String[]{"-1",""+lastSync});
 	}
 	
 	public Cursor getUpdateOfficer(long lastSync){
-		return petugasTable.getCursorOfNewItems(database, new String[]{"-1","-1",""+lastSync});
+		return petugasTable.getCursorOfUpdateItems(database, new String[]{"-1","-1",""+lastSync});
 	}
 	
 	public Cursor getUpdateClinic(long lastSync){
-		return puskesmasTable.getCursorOfNewItems(database, new String[]{"-1",""+lastSync});
+		return puskesmasTable.getCursorOfUpdateItems(database, new String[]{"-1",""+lastSync});
 	}
 	
 	public Cursor getUpdatePregnancy(long lastSync){
-		return kandunganTable.getCursorOfNewItems(database, new String[]{"-1","-1",""+lastSync});
+		return kandunganTable.getCursorOfUpdateItems(database, new String[]{"-1","-1",""+lastSync});
 	}
 	
 	public Cursor getUpdatePhoto(long lastSync){
-		return usgFotoTable.getCursorOfNewItems(database, new String[]{"-1","-1","-1","-1",""+lastSync});
+		return usgFotoTable.getCursorOfUpdateItems(database, new String[]{"-1","-1","-1","-1",""+lastSync});
 	}
 	
 	public Cursor getUpdateServe(long lastSync){
-		return melayaniTable.getCursorOfNewItems(database, new String[]{"-1","-1",""+lastSync});
+		return melayaniTable.getCursorOfUpdateItems(database, new String[]{"-1","-1",""+lastSync});
 	}
 	
 	public Cursor getUpdateWorksOn(long lastSync){
-		return bjTable.getCursorOfNewItems(database, new String[]{"-1","-1",""+lastSync});
+		return bjTable.getCursorOfUpdateItems(database, new String[]{"-1","-1",""+lastSync});
 	}
 	
 	public Cursor getUpdateValidation(long lastSync){
-		return validasiTable.getCursorOfNewItems(database, new String[]{"-1","-1","-1","-1",""+lastSync});
+		return validasiTable.getCursorOfUpdateItems(database, new String[]{"-1","-1","-1","-1",""+lastSync});
 	}
 	
 	public Cursor getUpdateComment(long lastSync){
-		return komentarTable.getCursorOfNewItems(database, new String[]{"-1","-1","-1","-1",""+lastSync});
+		return komentarTable.getCursorOfUpdateItems(database, new String[]{"-1","-1","-1","-1",""+lastSync});
 	}
 	
 	public SQLiteDatabase getDatabase() {
@@ -737,6 +762,8 @@ public class USGDBHelper extends SQLiteOpenHelper {
 	
 	public void deletePatient(String patientId){
 		ContentValues cv = new ContentValues();
+		long timestamp = DateUtils.getCurrentLong();
+		cv.put(USGTable.C_MODIFYSTAMP, timestamp);
 		cv.put(USGTable.C_ISACTIVE, 0);
 		cv.put(USGTable.C_DIRTY, 1);
 		String[] args = {patientId};
@@ -751,6 +778,8 @@ public class USGDBHelper extends SQLiteOpenHelper {
 		ContentValues cv = new ContentValues();
 		cv.put(USGTable.C_ISACTIVE, 0);
 		cv.put(USGTable.C_DIRTY, 1);
+		long timestamp = DateUtils.getCurrentLong();
+		cv.put(USGTable.C_MODIFYSTAMP, timestamp);
 		String[] args = {patientId, ""+pregnancyId};
 		database.update(PregnancyTable.TABLE_NAME, cv, PregnancyTable.C_ID_PASIEN+"=? and "+PregnancyTable.C_ID+"=?", args);
 		database.update(PhotoTable.TABLE_NAME, cv, PhotoTable.C_ID_PASIEN+"=? and "+PhotoTable.C_ID_KANDUNGAN+"=?", args);
@@ -760,10 +789,53 @@ public class USGDBHelper extends SQLiteOpenHelper {
 	public void deletePhoto(String patientId, int pregnancyId, int photoId) {
 		// TODO Auto-generated method stub
 		ContentValues cv = new ContentValues();
+		long timestamp = DateUtils.getCurrentLong();
+		cv.put(USGTable.C_MODIFYSTAMP, timestamp);
 		cv.put(USGTable.C_ISACTIVE, 0);
 		cv.put(USGTable.C_DIRTY, 1);
 		String[] args = {patientId, ""+pregnancyId, ""+photoId};
 		database.update(PhotoTable.TABLE_NAME, cv, PhotoTable.C_ID_PASIEN+"=? and "+PhotoTable.C_ID_KANDUNGAN+"=? and "+PhotoTable.C_ID+"=?", args);
 		database.update(ValidationTable.TABLE_NAME, cv, ValidationTable.C_ID_USGPASIEN+"=? and "+ValidationTable.C_ID_USGKANDUNGAN+"=? and "+ValidationTable.C_ID_USGFOTO+"=?", args);
+	}
+
+	public void updateValidationPhotoNumber(String ktp, int pregnancyNumber,
+			int localPhotoNumber, int serverPhotoNumber) {
+		ContentValues cv = new ContentValues();
+		cv.put(ValidationTable.C_SERVER_ID2_FOTO, serverPhotoNumber);
+		String[] args = {ktp, ""+pregnancyNumber, ""+localPhotoNumber};
+		database.update(ValidationTable.TABLE_NAME, cv, ValidationTable.C_ID_USGPASIEN+"=? and "+ValidationTable.C_ID_USGKANDUNGAN+"=? and "+ValidationTable.C_ID_USGFOTO+"=?", args);
+	}
+
+	public void markMessagesAsOfficer(String patientId) {
+		ContentValues cv = new ContentValues();
+		long timestamp = DateUtils.getCurrentLong();
+		cv.put(USGTable.C_MODIFYSTAMP, timestamp);
+		cv.put(CommentTable.C_HASSEEN, 1);
+		cv.put(USGTable.C_DIRTY, 1);
+		database.update(CommentTable.TABLE_NAME, cv, CommentTable.C_FROM_DOCTOR+"=1 and "+CommentTable.C_ID_USGPASIEN+"=? and "+CommentTable.C_HASSEEN+"=0", new String[]{patientId});
+	}
+	
+	public void markMessagesAsDoctor(String patientId, String userId) {
+		ContentValues cv = new ContentValues();
+		long timestamp = DateUtils.getCurrentLong();
+		cv.put(USGTable.C_MODIFYSTAMP, timestamp);
+		cv.put(CommentTable.C_HASSEEN, 1);
+		cv.put(USGTable.C_DIRTY, 1);
+		database.update(CommentTable.TABLE_NAME, cv, CommentTable.C_HASSEEN+"=0 and "+CommentTable.C_ID_USGPASIEN+"=? and ("+CommentTable.C_FROM_DOCTOR+"=0 or "+CommentTable.C_ID_DOKTER+" <> ?)", new String[]{patientId, userId});
+	}
+
+	public void echo() {
+		// TODO Auto-generated method stub
+		Log.d("User", UserTable.CREATE_STATEMENT);
+		Log.d("Officer", OfficerTable.CREATE_STATEMENT);
+		Log.d("Doctor", DoctorTable.CREATE_STATEMENT);
+		Log.d("Clinic", ClinicTable.CREATE_STATEMENT);
+		Log.d("Patient", PatientTable.CREATE_STATEMENT);
+		Log.d("Pregnancy", PregnancyTable.CREATE_STATEMENT);
+		Log.d("Photo", PhotoTable.CREATE_STATEMENT);
+		Log.d("Serve", ServeTable.CREATE_STATEMENT);
+		Log.d("WorksOn", WorksOnTable.CREATE_STATEMENT);
+		Log.d("Validation", ValidationTable.CREATE_STATEMENT);
+		Log.d("Comment", CommentTable.CREATE_STATEMENT);
 	}
 }

@@ -14,6 +14,8 @@ public class PatientTable extends USGTable<Patient> {
 		C_BIRTHDATE = "birthdate",
 		C_FILENAME = "filename",
 		C_DESCRIPTION = "description",
+		C_PHOTOTIMESTAMP = "photo_timestamp",
+		C_SERVERPHOTOTIMESTAMP = "server_photo_timestamp",
 		CREATE_STATEMENT = "create table " + TABLE_NAME + " ( "
 				+ C_ID + " text not null primary key, "
 				+ C_NAME + " text not null,"
@@ -26,7 +28,9 @@ public class PatientTable extends USGTable<Patient> {
 				+ C_ISACTIVE + " integer, "
 				+ C_MODIFYSTAMP + " integer, "
 				+ C_CREATESTAMP + " integer, "
-				+ C_SERVER_ID + " text);";
+				+ C_SERVER_ID + " text, "
+				+ C_PHOTOTIMESTAMP + " integer, "
+				+ C_SERVERPHOTOTIMESTAMP + " integer);";
 	private static final String[] ALL_COLUMNS = {
 		C_ID,
 		C_NAME,
@@ -39,7 +43,9 @@ public class PatientTable extends USGTable<Patient> {
 		C_ISACTIVE,
 		C_MODIFYSTAMP,
 		C_CREATESTAMP,
-		C_SERVER_ID
+		C_SERVER_ID,
+		C_PHOTOTIMESTAMP,
+		C_SERVERPHOTOTIMESTAMP
 	};
 	private static final String PRIMARY_CLAUSE = C_ID+"=?";
 	private static final String NEW_CLAUSE = C_ISACTIVE+"=1 AND ("+C_SERVER_ID+"=? OR "+C_CREATESTAMP+" > ?)";

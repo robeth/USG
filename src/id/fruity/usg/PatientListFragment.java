@@ -1,10 +1,8 @@
 package id.fruity.usg;
 
-import id.fruity.usg.PatientInfoAdapter.PatientInfoAdapterInterface;
+import id.fruity.usg.PatientOverviewAdapter.PatientInfoAdapterInterface;
 import id.fruity.usg.database.USGDBHelper;
-import id.fruity.usg.database.table.entry.Pregnancy;
 import id.fruity.usg.model.PatientOverview;
-import id.fruity.usg.util.DateUtils;
 
 import java.util.ArrayList;
 
@@ -13,21 +11,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.text.InputFilter;
-import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
 public class PatientListFragment extends SherlockFragment {
-	private ArrayList<PatientInfo> infos;
-	private PatientInfoAdapter mAdapter;
+	private PatientOverviewAdapter mAdapter;
 	private ListView list;
 	private USGDBHelper helper;
 	private int puskesmasId;
@@ -85,13 +78,8 @@ public class PatientListFragment extends SherlockFragment {
         View v = inflater.inflate(R.layout.patient_list, container, false);
         list = (ListView) v.findViewById(R.id.patient_list);
         
-        infos = new ArrayList<PatientInfo>();
-        for(int i = 0; i < pos.size(); i++){
-        	Log.d("Patient Date", i + ": "+pos.get(i).getLastPhoto());
-        	infos.add(new PatientInfo(pos.get(i).getIdPasien() ,R.drawable.mother_icon, pos.get(i).getName(), "Alamat a", "454545", "12 Mei 1980", "Kehamilan 1", DateUtils.getStringOfCalendarFromLong(pos.get(i).getLastPhoto()), pos.get(i).getTotalPhoto()));
-        }
         Log.d("Patient List Fragment", "Onstart:"+userId);
-        mAdapter = new PatientInfoAdapter(infos, getActivity().getLayoutInflater(), getActivity(), userId, adapterInterface);
+        mAdapter = new PatientOverviewAdapter(pos, getActivity().getLayoutInflater(), getActivity(), userId, adapterInterface);
         list.setAdapter(mAdapter);
         return v;
     }
@@ -117,4 +105,19 @@ public class PatientListFragment extends SherlockFragment {
 		});
 		alert.show();
 	}
+    
+    public void reloadData(){
+    	helper.open();
+        PatientOverview p = new PatientOverview();
+        Cursor c = null;
+        if(isDoctor){
+        	c = helper.getPatientOverviewDoctor(userId);
+        } else {
+        	c = helper.getPatientOverview(puskesmasId);
+        }
+        pos = p.getItems(c);
+        helper.close();
+        mAdapter.setInfos(pos);
+        mAdapter.notifyDataSetChanged();
+    }
 }

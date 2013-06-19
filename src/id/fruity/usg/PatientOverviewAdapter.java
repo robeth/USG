@@ -1,11 +1,11 @@
 package id.fruity.usg;
 
+import id.fruity.usg.model.PatientOverview;
+import id.fruity.usg.util.DateUtils;
+
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,18 +13,18 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class PatientInfoAdapter extends BaseAdapter {
+public class PatientOverviewAdapter extends BaseAdapter {
 
-	private ArrayList<PatientInfo> infos;
+	private ArrayList<PatientOverview> infos;
 	private LayoutInflater inflater;
 	private Activity activity;
 	private String userId;
 	private PatientInfoAdapterInterface adapterInterface;
 
-	public PatientInfoAdapter(ArrayList<PatientInfo> infos,
+	public PatientOverviewAdapter(ArrayList<PatientOverview> infos,
 			LayoutInflater inflater, Activity activity, String userId, PatientInfoAdapterInterface adapterInterface) {
 		super();
 		this.infos = infos;
@@ -33,6 +33,20 @@ public class PatientInfoAdapter extends BaseAdapter {
 		this.userId = userId;
 		this.adapterInterface = adapterInterface;
 	}
+	
+	
+
+	public ArrayList<PatientOverview> getInfos() {
+		return infos;
+	}
+
+
+
+	public void setInfos(ArrayList<PatientOverview> infos) {
+		this.infos = infos;
+	}
+
+
 
 	@Override
 	public int getCount() {
@@ -67,15 +81,27 @@ public class PatientInfoAdapter extends BaseAdapter {
 				.findViewById(R.id.patient_last_date); // duration
 		ImageView patientPhoto = (ImageView) convertView
 				.findViewById(R.id.patient_photo); // thumb image
-		PatientInfo item = infos.get(position);
-
+		PatientOverview item = infos.get(position);
+		LinearLayout messageBox = (LinearLayout) convertView.findViewById(R.id.new_message_box);
+		LinearLayout validationBox = (LinearLayout) convertView.findViewById(R.id.new_validation_box);
+		TextView messageText = (TextView) messageBox.findViewById(R.id.new_message_text);
+		TextView validationText = (TextView) validationBox.findViewById(R.id.new_validation_text);
+		
 		// Setting all values in list view
 		name.setText(item.getName());
-		frequency.setText(item.getNumberOfUSG() + " foto");
-		lastUpdate.setText(item.getLastCheck());
-		patientPhoto.setImageResource(item.getPhotoId());
-		convertView.setOnClickListener(new PatientClickListener(item.getPatientId()));
-		convertView.setOnLongClickListener(new PatientLongClickListener(item.getPatientId(), item.getName()));
+		frequency.setText(item.getTotalPhoto() + " photo"+(item.getTotalPhoto()>1?"s":""));
+		if (item.getLastPhoto()  > 0){
+			lastUpdate.setText(DateUtils.getStringOfCalendarFromLong(item.getLastPhoto()));
+		} else {
+			lastUpdate.setText("");
+		}
+		patientPhoto.setImageResource(R.drawable.mother_icon);
+		convertView.setOnClickListener(new PatientClickListener(item.getIdPasien()));
+		convertView.setOnLongClickListener(new PatientLongClickListener(item.getIdPasien(), item.getName()));
+		messageBox.setVisibility(item.getNewMessageCount()>0? View.VISIBLE : View.INVISIBLE);
+		validationBox.setVisibility(item.getNewValidasiCount()>0? View.VISIBLE : View.INVISIBLE);
+		messageText.setText(""+item.getNewMessageCount());
+		validationText.setText(""+item.getNewValidasiCount());
 		return convertView;
 	}
 	
