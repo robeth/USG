@@ -42,7 +42,6 @@ obj/local/armeabi-v7a/objs/mixed_sample/jni_part.o: jni/jni_part.cpp \
  ../../../OpenCVWorkspace/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2/imgproc/imgproc.hpp \
  ../../../OpenCVWorkspace/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2/imgproc/types_c.h \
  ../../../OpenCVWorkspace/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2/core/core_c.h \
- Z:/OpenCVWorkspace/android-ndk-r8e/platforms/android-8/arch-arm/usr/include/android/log.h \
  Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/ctime \
  jni/method.h
 
@@ -131,8 +130,6 @@ Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/map
 ../../../OpenCVWorkspace/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2/imgproc/types_c.h:
 
 ../../../OpenCVWorkspace/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2/core/core_c.h:
-
-Z:/OpenCVWorkspace/android-ndk-r8e/platforms/android-8/arch-arm/usr/include/android/log.h:
 
 Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/ctime:
 

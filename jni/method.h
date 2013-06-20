@@ -10,7 +10,8 @@
 #define IRHT_H_
 
 
-void mainIRHT(cv::Mat&, int, int, float, float*);
-void mainRHT(cv::Mat&, int, float*);
+void mainIRHT(cv::Mat&, float*);
+void mainRHT(cv::Mat&, float*);
+void mainPSO(cv::Mat&, float*);
 
 #endif /* IRHT_H_ */

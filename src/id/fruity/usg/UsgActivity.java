@@ -389,9 +389,9 @@ public class UsgActivity extends SherlockActivity {
 
 		float[] rs = null;
 		if (selectedMethod == 0) {
-			rs = RHT(m1.getNativeObjAddr(), 10000);
+			rs = RHT(m1.getNativeObjAddr());
 		} else if (selectedMethod == 1) {
-			rs = IRHT(m1.getNativeObjAddr(), 10000, 100, 50);
+			rs = IRHT(m1.getNativeObjAddr());
 		}
 
 		Log.d("Result", "length" + rs.length + "[" + rs[0] + "," + rs[1] + ","
@@ -477,12 +477,13 @@ public class UsgActivity extends SherlockActivity {
 
 	}
 
-	public native float[] RHT(long matAddrGr, int sample);
+	public static native float[] RHT(long matAddrGr);
 
-	public native float[] IRHT(long matAddrGr, int sample, int interval,
-			float delta);
-
-	public native void Mark(long matAddrrGr, float a, float b, float x,
+	public static native float[] IRHT(long matAddrGr);
+	
+	public static native float[] PSO(long matAddrGr);
+	
+	public static native void Mark(long matAddrrGr, float a, float b, float x,
 			float y, float theta);
 
 	private final class ValidationActionMode implements ActionMode.Callback {

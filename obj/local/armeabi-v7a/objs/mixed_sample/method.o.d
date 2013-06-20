@@ -65,11 +65,9 @@ obj/local/armeabi-v7a/objs/mixed_sample/method.o: jni/method.cpp \
  Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/valarray \
  ../../../OpenCVWorkspace/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2/contrib/openfabmap.hpp \
  Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/set \
- ../../../OpenCVWorkspace/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2\highgui\highgui.hpp \
  Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/ctime \
- Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/unordered_map \
- Z:/OpenCVWorkspace/android-ndk-r8e/platforms/android-8/arch-arm/usr/include/dirent.h \
- Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/iomanip
+ Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/iomanip \
+ Z:/OpenCVWorkspace/android-ndk-r8e/platforms/android-8/arch-arm/usr/include/android/log.h
 
 ../../../OpenCVWorkspace/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2\opencv.hpp:
 
@@ -203,12 +201,8 @@ Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/val
 
 Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/set:
 
-../../../OpenCVWorkspace/OpenCV-2.4.4-android-sdk/sdk/native/jni/include/opencv2\highgui\highgui.hpp:
-
 Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/ctime:
 
-Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/unordered_map:
-
-Z:/OpenCVWorkspace/android-ndk-r8e/platforms/android-8/arch-arm/usr/include/dirent.h:
-
 Z:/OpenCVWorkspace/android-ndk-r8e/sources/cxx-stl/gnu-libstdc++/4.6/include/iomanip:
+
+Z:/OpenCVWorkspace/android-ndk-r8e/platforms/android-8/arch-arm/usr/include/android/log.h:
