@@ -838,4 +838,45 @@ public class USGDBHelper extends SQLiteOpenHelper {
 		Log.d("Validation", ValidationTable.CREATE_STATEMENT);
 		Log.d("Comment", CommentTable.CREATE_STATEMENT);
 	}
+
+	public void test2() {
+		// TODO Auto-generated method stub
+		//Insert table user
+				User  u1 = new User("-1", true,true,10,10,"ktp1","username1","password1","user1","address1","email1","phone1","description1", -1, -1);
+				User  u2 = new User("-1", true,true,10,10,"ktp2","username2","password2","user2","address2","email2","phone2","description1", -1, -1);
+				userTable.insert(database, u1);
+				userTable.insert(database, u2);
+				
+				//Insert table dokter
+				Doctor d1 = new Doctor("-1", true, true, 10, 10, "ktp1", 1);
+				dokterTable.insert(database, d1);
+
+				Clinic p1 = new Clinic(-1, true, true, 10, 10, 1, "Puskesmas 1", "Addr Puskesmas 1", "Kota 1", "Prov 1", "+62315318242", "Puskesmas 1");
+				puskesmasTable.insert(database, p1);
+				
+				Officer pe1 = new Officer("-1", true, true, 10, 10, "ktp2", 1, 1,-1);
+				petugasTable.insert(database, pe1);
+				
+				Patient pa1 = new Patient("-1", true, true, 10, 10, "ktp101", "Pasien 1", "Alamat Pasien 1", "+62", -1,"-1","Deskripsi Pasien 1",-1,-1);
+				pasienTable.insert(database, pa1);
+				
+				Pregnancy k1 = new Pregnancy(-1, true, true, 10, 10, 1, "ktp101", true, "-1");
+				kandunganTable.insert(database, k1);
+				
+				Photo f1 = new Photo(-1, true, true, 10, 10, 1, 10, "test.jpg", -1, -1, -1, -1, -1, -1,"RHT", "ktp101", 1, "ktp2", "-1", -1, "-1", 1000, -1);
+				usgFotoTable.insert(database, f1);
+				
+				Serve mel1 = new Serve(-1, true, true, 10, 10, 1, "ktp101", "-1");
+				melayaniTable.insert(database, mel1);
+				
+				WorksOn bj1 = new WorksOn("-1", true, true, 10, 1, "ktp1", 1, -1);
+				bjTable.insert(database, bj1);
+				
+				Comment ko1 = new Comment(-1, true, true, 10, 10, 1,"ktp1", "ktp101","ktp2", true,"Kehamilan 2 kamu ya..", false, "-1", "-1", "-1");
+				komentarTable.insert(database, ko1);
+				
+				
+				Validation val1 = new Validation("-1", true, true, 10, 10, "ktp1", 1, 1, "ktp101", -1, -1, -1, -1, -1, false, -1, -1, "-1");
+				validasiTable.insert(database, val1);
+	}
 }

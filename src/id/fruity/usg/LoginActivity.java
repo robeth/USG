@@ -75,7 +75,7 @@ public class LoginActivity extends Activity {
 	}
 	
 	private void onLoginProcessComplete(boolean status){
-		if(status){
+		if(false){
 			gotoHomeScreen(usernameField.getText().toString(),false);
 		} else {
 			usernameField.setText("");

@@ -48,20 +48,25 @@ public class PatientListActivity extends SherlockFragmentActivity {
 		Synchonization.A = this;
 
 		Bundle b = getIntent().getExtras();
-		String username = b.getString("username");
-
+		String username = "username1";//b.getString("username");
+		
+		this.deleteDatabase(USGDBHelper.DATABASE_NAME);
 		helper = USGDBHelper.getInstance(this);
 		helper.open();
+		helper.test2();
+		
 		Log.d("HOmescreen", "Check:"+helper.isUserExist(username));
-		if(!helper.isUserExist(username)){
-			logout();
-			return;
-		}
+//		if(!helper.isUserExist(username)){
+//			logout();
+//			return;
+//		}
 		userId = helper.getIdOfUsername(username);
 		isDoctor = helper.isDoctor(userId);
 		
 		// Fix header
-		long lastSync = Preference.getLastSync();
+		long lastSync = 1;//Preference.getLastSync();
+		Preference.setLastSync(1);
+		
 		String lastSyncString = DateUtils.getStringOfCalendarFromLong(lastSync);
 		Log.d("HOmescreen", "Check Last SYnc:"+lastSync);
 		String title = "";

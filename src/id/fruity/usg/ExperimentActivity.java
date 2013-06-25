@@ -1,9 +1,7 @@
 package id.fruity.usg;
 
-import id.fruity.usg.database.table.entry.Validation;
 import id.fruity.usg.experiment.USGConstant;
 import id.fruity.usg.experiment.USGSet;
-import id.fruity.usg.util.DateUtils;
 import id.fruity.usg.util.Ellipse;
 
 import java.io.InputStream;
@@ -18,7 +16,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
@@ -27,9 +27,10 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class ExperimentActivity extends SherlockActivity {
 	private Bitmap sourceBitmap, tempBitmap;
+	private TextView imageFilename, rhtValue, irhtValue, psoValue;
 	private Mat m1;
 	private ImageView im;
-	int i = 9;
+	int i = -1;
 	private static final int[] ids = { R.drawable.im13, R.drawable.im14,
 			R.drawable.im15, R.drawable.im16, R.drawable.im17, R.drawable.im18,
 			R.drawable.im20, R.drawable.im21, R.drawable.im22, R.drawable.im23,
@@ -63,6 +64,11 @@ public class ExperimentActivity extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.experiment);
 		im = (ImageView) findViewById(R.id.picture);
+		imageFilename = (TextView) findViewById(R.id.imageName);
+		rhtValue = (TextView) findViewById(R.id.rht_value);
+		irhtValue = (TextView) findViewById(R.id.irht_value);
+		psoValue = (TextView) findViewById(R.id.pso_value);
+		
 		// Configure action bar
 		getSupportActionBar().setNavigationMode(
 				ActionBar.NAVIGATION_MODE_STANDARD);
@@ -77,19 +83,13 @@ public class ExperimentActivity extends SherlockActivity {
 	USGConstant c;
 
 	public void doMethod(int indexMethod) {
-		i++;
-		i = i % ids.length;
+		loadImage();
 		c = USGSet.get(ids[i]);
-		if (tempBitmap != null) {
-			tempBitmap.recycle();
-		}
+		
 		if (m1 != null) {
 			m1.release();
 		}
-
 		m1 = new Mat();
-		InputStream is = this.getResources().openRawResource(ids[i]);
-		tempBitmap = BitmapFactory.decodeStream(is);
 		Utils.bitmapToMat(tempBitmap, m1);
 		float[] rs = null;
 		if (indexMethod == 0) {
@@ -119,6 +119,21 @@ public class ExperimentActivity extends SherlockActivity {
 						+ rs[5]);
 		Utils.matToBitmap(m1, tempBitmap);
 		im.setImageBitmap(tempBitmap);
+		String resultString = ""+ r(Math.abs(rs[0] - c.getX())) + "-"
+				+ r(Math.abs(rs[1] - c.getY())) + "-"
+				+ r(Math.abs(rs[2] - c.getA())) + "-"
+				+ r(Math.abs(rs[3] - c.getB())) + "-"
+				+ r(Math.abs(rs[4] - c.getTetha())) + "-"
+				+ r(Math.abs(c.getHc() - circumference )) + "-"
+				+ r(Math.abs(c.getBpd() - biparietalDiameter)) + "*"
+				+ rs[5];
+		if (indexMethod == 0) {
+			rhtValue.setText(resultString);
+		} else if (indexMethod == 1) {
+			irhtValue.setText(resultString);
+		} else if (indexMethod == 2) {
+			psoValue.setText(resultString);
+		}
 	}
 
 	@Override
@@ -130,11 +145,11 @@ public class ExperimentActivity extends SherlockActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add("RHT").setIcon(R.drawable.content_edit)
+		menu.add("RHT")
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		menu.add("IRHT").setIcon(R.drawable.content_new_picture)
+		menu.add("IRHT")
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		menu.add("PSO").setIcon(R.drawable.content_discard)
+		menu.add("PSO")
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
@@ -142,14 +157,58 @@ public class ExperimentActivity extends SherlockActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getTitle().equals("RHT")) {
+			loadImage();
 			doMethod(0);
 		} else if (item.getTitle().equals("IRHT")) {
+			loadImage();
 			doMethod(1);
 		} else if (item.getTitle().equals("PSO")) {
+			loadImage();
 			doMethod(2);
 		} else if (item.getItemId() == android.R.id.home) {
 			finish();
 		}
 		return true;
 	}
+	
+	public void loadImage(){
+		if (tempBitmap != null) {
+			tempBitmap.recycle();
+		}
+		if(i < 0 || i >= ids.length) i = 0;
+		InputStream is = this.getResources().openRawResource(ids[i]);
+		tempBitmap = BitmapFactory.decodeStream(is);
+		im.setImageBitmap(tempBitmap);
+		imageFilename.setText(USGSet.get(ids[i]).getImageFilename());
+	}
+	
+	public void prevClicked(View v){
+		i++;
+		if(i >= ids.length){
+			i = 0;
+		}
+		loadImage();
+		cleanResultBox();
+	}
+	
+	public void nextClicked(View v){
+		i--;
+		if(i < 0){
+			i = ids.length -1;
+		}
+		loadImage();
+		cleanResultBox();
+	}
+	
+	private void cleanResultBox(){
+		this.rhtValue.setText("---");
+		this.irhtValue.setText("---");
+		this.psoValue.setText("---");
+	}
+	
+	public static float r(float paramFloat) {
+	    return Float.parseFloat(String.format("%.2f%n", paramFloat));
+	}
+	
+	
 }

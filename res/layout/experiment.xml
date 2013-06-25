@@ -3,10 +3,107 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    <ImageView 
+
+    <ImageView
         android:id="@+id/picture"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp" />
+
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/prev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:onClick="prevClicked"
+            android:text="prev" />
+
+        <TextView
+            android:id="@+id/imageName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="None" />
+
+        <Button
+            android:id="@+id/next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:onClick="nextClicked"
+            android:text="next" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/result_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp" >
+
+        <TextView
+            android:id="@+id/rht"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="RHT:" />
+
+        <TextView
+            android:id="@+id/rht_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/rht"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@id/rht"
+            android:text="--"
+            android:textSize="9dp" />
+
+        <TextView
+            android:id="@+id/irht"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/rht"
+            android:layout_margin="5dp"
+            android:text="IRHT:" />
+
+        <TextView
+            android:id="@+id/irht_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/rht_value"
+            android:layout_alignTop="@id/irht"
+            android:layout_margin="5dp"
+            android:text="--"
+            android:textSize="9dp" />
+
+        <TextView
+            android:id="@+id/pso"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/irht"
+            android:layout_margin="5dp"
+            android:text="PSO:" />
+
+        <TextView
+            android:id="@+id/pso_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/rht_value"
+            android:layout_alignTop="@id/pso"
+            android:layout_margin="5dp"
+            android:text="--"
+            android:textSize="9dp" />
+    </RelativeLayout>
 
 </LinearLayout>
