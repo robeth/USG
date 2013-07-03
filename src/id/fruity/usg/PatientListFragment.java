@@ -5,6 +5,9 @@ import id.fruity.usg.database.USGDBHelper;
 import id.fruity.usg.model.PatientOverview;
 
 import java.util.ArrayList;
+import java.util.Collections;
+
+
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -15,9 +18,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.widget.SearchView;
 
 public class PatientListFragment extends SherlockFragment {
 	private PatientOverviewAdapter mAdapter;
@@ -26,7 +32,7 @@ public class PatientListFragment extends SherlockFragment {
 	private int puskesmasId;
 	private String userId;
 	private boolean isDoctor;
-	ArrayList<PatientOverview> pos;
+	ArrayList<PatientOverview> pos,pos2,pos3;
 	private PatientInfoAdapterInterface adapterInterface = new PatientInfoAdapterInterface() {
 		
 		@Override
@@ -55,6 +61,7 @@ public class PatientListFragment extends SherlockFragment {
         if(!isDoctor){
         	puskesmasId = b.getInt("puskesmasId");
         }
+        
         helper = USGDBHelper.getInstance(this.getActivity());
         helper.open();
         PatientOverview p = new PatientOverview();
@@ -81,6 +88,9 @@ public class PatientListFragment extends SherlockFragment {
         Log.d("Patient List Fragment", "Onstart:"+userId);
         mAdapter = new PatientOverviewAdapter(pos, getActivity().getLayoutInflater(), getActivity(), userId, adapterInterface);
         list.setAdapter(mAdapter);
+        //mAdapter.setInfos(pos2)
+       // mAdapter.notifyDataSetChanged()
+        
         return v;
     }
     
@@ -120,4 +130,43 @@ public class PatientListFragment extends SherlockFragment {
         mAdapter.setInfos(pos);
         mAdapter.notifyDataSetChanged();
     }
+
+	public void sortByName() {
+		// TODO Auto-generated method stub
+		pos2 = (ArrayList<PatientOverview>) pos.clone();
+		Collections.sort(pos2);
+		
+		mAdapter.setInfos(pos2);
+	    mAdapter.notifyDataSetChanged();
+	        
+	}
+	
+	public void sortByLastPhoto() {
+		pos2 = (ArrayList<PatientOverview>) pos.clone();
+		Collections.sort(pos2, PatientOverview.PatientLastPhoto);
+		
+		mAdapter.setInfos(pos2);
+	    mAdapter.notifyDataSetChanged();
+	}
+	
+	
+	
+	public void filter(String s) {
+		// TODO Auto-generated method stub
+	
+	//	Log.d("pencet"+mAdapter.getCount(),s);
+	    pos3 = new ArrayList<PatientOverview>();
+		
+        
+		for (int i=0; i < pos.size();i++){
+			
+			if(pos.get(i).getName().toLowerCase().contains(s.toLowerCase())){
+				pos3.add(pos.get(i));				
+			}
+		}
+       
+        mAdapter.setInfos(pos3);
+        mAdapter.notifyDataSetChanged();    
+	}
+	
 }

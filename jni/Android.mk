@@ -2,7 +2,8 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-include ../../../OpenCVWorkspace/OpenCV-2.4.4-android-sdk/sdk/native/jni/OpenCV.mk
+
+include C:\Users\asus\Documents\GitHub\OpenCV-2.4.4-android-sdk\sdk\native\jni\OpenCV.mk
 
 LOCAL_MODULE    := mixed_sample
 LOCAL_SRC_FILES := jni_part.cpp method.cpp

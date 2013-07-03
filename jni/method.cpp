@@ -171,8 +171,8 @@ EllipseParams solveEllipseMatrixEquation(Mat& image,
 		b[i][0] = pow((float) temp.x, 2) + pow((float) temp.y, 2);
 	}
 	Mat a1, b1, c;
-	a1 = Mat(sampleNumber, sampleNumber, CV_32FC1, a);
-	b1 = Mat(sampleNumber, 1, CV_32FC1, b);
+//	a1 = Mat(sampleNumber, sampleNumber, CV_32FC1, a);
+	//b1 = Mat(sampleNumber, 1, CV_32FC1, b);
 
 	//debugFloatArray(a1);
 //	debugFloatArray(b1);
@@ -205,212 +205,212 @@ EllipseParams solveEllipseMatrixEquation(Mat& image,
 }
 
 void mainIRHT(Mat& inputMat, int rhtIteration, int rhtInterval, float deltaRect,
-		float* ellRes) {
-	srand(time(NULL));
-	ITERATION = rhtIteration;
-	INTERVAL = rhtInterval;
-	DELTA_RECT = deltaRect;
-
-	Mat image = inputMat;
-	Mat rect(image.rows, image.cols, CV_8UC1);
-	minA = 0.125 * image.cols;
-	maxA = 0.5 * image.cols;
-	minB = 0.125 * image.rows;
-	maxB = 0.5 * image.rows;
-	maxTetha = 180;
-
-	std::vector<Titik> filteredPoints = getCandidatePoints(image);
-
-	//Inisialisasi 5 akumulator 1D
-
-	accumulatorSize = (image.cols > image.rows) ? image.cols : image.rows;
-	xAccumulator = std::vector<int>(accumulatorSize);
-	yAccumulator = std::vector<int>(accumulatorSize);
-	aAccumulator = std::vector<int>(accumulatorSize);
-	bAccumulator = std::vector<int>(accumulatorSize);
-	tAccumulator = std::vector<int>(accumulatorSize);
-
-	for (int i = 0; i < accumulatorSize; i++) {
-		xAccumulator[i] = 0;
-		yAccumulator[i] = 0;
-		aAccumulator[i] = 0;
-		bAccumulator[i] = 0;
-		tAccumulator[i] = 0;
-	}
-	highest.a = 0;
-	highest.b = 0;
-	highest.xc = 0;
-	highest.yc = 0;
-	highest.theta = 0;
-
-	for (int i = 0; i < ITERATION; i++) {
-		//std::cout << "Iteration : " << i << std::endl;
-		bool isValidParams = false;
-		EllipseParams params;
-		while (!isValidParams) {
-			std::vector<Titik> chosenPoints = getRandomPoints(filteredPoints,
-					sampleNumber, image);
-			params = solveEllipseMatrixEquation(image, chosenPoints);
-
-			//tidak ada parameter negatif//KENAPA KOK NGA DI BATASIN DI SINI AJA SIH BERT?????
-			if (params.a > 0 && params.b > 0 && params.xc > 0
-					&& params.yc > 0) {
-				isValidParams = true;
-			}
-		}
-		float ecc = ((float) params.b) / params.a;
-		if (ecc <= MAX_ECC && ecc >= MIN_ECC && params.a <= maxA
-				&& params.a >= minA && params.b <= maxB && params.b >= minB
-				&& params.xc > -1 && params.yc > -1
-				&& params.xc < accumulatorSize && params.yc < accumulatorSize) {
-
-			if (params.theta < 0) {
-				params.theta += 360;
-			}
-
-			int aCounter = aAccumulator[params.a];
-			int bCounter = bAccumulator[params.b];
-			int xCounter = xAccumulator[params.xc];
-			int yCounter = yAccumulator[params.yc];
-			int tCounter = tAccumulator[params.theta];
-
-			aAccumulator[params.a] = aCounter + 1;
-			aAccumulator[params.b] = bCounter + 1;
-			aAccumulator[params.xc] = xCounter + 1;
-			aAccumulator[params.yc] = yCounter + 1;
-			aAccumulator[params.theta] = tCounter + 1;
-
-			if (aAccumulator[highest.a] < aCounter + 1) {
-				highest.a = params.a;
-			}
-			if (aAccumulator[highest.b] < bCounter + 1) {
-				highest.b = params.b;
-			}
-			if (aAccumulator[highest.xc] < xCounter + 1) {
-				highest.xc = params.xc;
-			}
-			if (aAccumulator[highest.yc] < yCounter + 1) {
-				highest.yc = params.yc;
-			}
-			if (aAccumulator[highest.theta] < tCounter + 1) {
-				highest.theta = params.theta;
-			}
-		}
-		if ((i + 1) % INTERVAL == 0) {
-			std::cout << "In" << std::endl;
-			eliminatePoint(image, rect, filteredPoints, highest.xc, highest.yc,
-					highest.a * 2 + DELTA_RECT, highest.b * 2 + DELTA_RECT,
-					highest.theta);
-		}
-	}
-	ellRes[0] = (float) highest.xc;
-	ellRes[1] = (float) highest.yc;
-	ellRes[2] = (float) highest.a;
-	ellRes[3] = (float) highest.b;
-	ellRes[4] = (float) highest.theta;
-	ellRes[5] = -1;
-	ellipse(image, Point(highest.xc, highest.yc), Size(highest.a, highest.b),
-			highest.theta, 0, 360, Scalar(255, 0, 0), 1, 8, 0);
+	float* ellRes) {
+//	srand(time(NULL));
+//	ITERATION = rhtIteration;
+//	INTERVAL = rhtInterval;
+//	DELTA_RECT = deltaRect;
+//
+//	Mat image = inputMat;
+//	Mat rect(image.rows, image.cols, CV_8UC1);
+//	minA = 0.125 * image.cols;
+//	maxA = 0.5 * image.cols;
+//	minB = 0.125 * image.rows;
+//	maxB = 0.5 * image.rows;
+//	maxTetha = 180;
+//
+//	std::vector<Titik> filteredPoints = getCandidatePoints(image);
+//
+//	//Inisialisasi 5 akumulator 1D
+//
+//	accumulatorSize = (image.cols > image.rows) ? image.cols : image.rows;
+//	xAccumulator = std::vector<int>(accumulatorSize);
+//	yAccumulator = std::vector<int>(accumulatorSize);
+//	aAccumulator = std::vector<int>(accumulatorSize);
+//	bAccumulator = std::vector<int>(accumulatorSize);
+//	tAccumulator = std::vector<int>(accumulatorSize);
+//
+//	for (int i = 0; i < accumulatorSize; i++) {
+//		xAccumulator[i] = 0;
+//		yAccumulator[i] = 0;
+//		aAccumulator[i] = 0;
+//		bAccumulator[i] = 0;
+//		tAccumulator[i] = 0;
+//	}
+//	highest.a = 0;
+//	highest.b = 0;
+//	highest.xc = 0;
+//	highest.yc = 0;
+//	highest.theta = 0;
+//
+//	for (int i = 0; i < ITERATION; i++) {
+//		//std::cout << "Iteration : " << i << std::endl;
+//		bool isValidParams = false;
+//		EllipseParams params;
+//		while (!isValidParams) {
+//			std::vector<Titik> chosenPoints = getRandomPoints(filteredPoints,
+//					sampleNumber, image);
+//			params = solveEllipseMatrixEquation(image, chosenPoints);
+//
+//			//tidak ada parameter negatif//KENAPA KOK NGA DI BATASIN DI SINI AJA SIH BERT?????
+//			if (params.a > 0 && params.b > 0 && params.xc > 0
+//					&& params.yc > 0) {
+//				isValidParams = true;
+//			}
+//		}
+//		float ecc = ((float) params.b) / params.a;
+//		if (ecc <= MAX_ECC && ecc >= MIN_ECC && params.a <= maxA
+//				&& params.a >= minA && params.b <= maxB && params.b >= minB
+//				&& params.xc > -1 && params.yc > -1
+//				&& params.xc < accumulatorSize && params.yc < accumulatorSize) {
+//
+//			if (params.theta < 0) {
+//				params.theta += 360;
+//			}
+//
+//			int aCounter = aAccumulator[params.a];
+//			int bCounter = bAccumulator[params.b];
+//			int xCounter = xAccumulator[params.xc];
+//			int yCounter = yAccumulator[params.yc];
+//			int tCounter = tAccumulator[params.theta];
+//
+//			aAccumulator[params.a] = aCounter + 1;
+//			aAccumulator[params.b] = bCounter + 1;
+//			aAccumulator[params.xc] = xCounter + 1;
+//			aAccumulator[params.yc] = yCounter + 1;
+//			aAccumulator[params.theta] = tCounter + 1;
+//
+//			if (aAccumulator[highest.a] < aCounter + 1) {
+//				highest.a = params.a;
+//			}
+//			if (aAccumulator[highest.b] < bCounter + 1) {
+//				highest.b = params.b;
+//			}
+//			if (aAccumulator[highest.xc] < xCounter + 1) {
+//				highest.xc = params.xc;
+//			}
+//			if (aAccumulator[highest.yc] < yCounter + 1) {
+//				highest.yc = params.yc;
+//			}
+//			if (aAccumulator[highest.theta] < tCounter + 1) {
+//				highest.theta = params.theta;
+//			}
+//		}
+//		if ((i + 1) % INTERVAL == 0) {
+//			std::cout << "In" << std::endl;
+//			eliminatePoint(image, rect, filteredPoints, highest.xc, highest.yc,
+//					highest.a * 2 + DELTA_RECT, highest.b * 2 + DELTA_RECT,
+//					highest.theta);
+//		}
+//	}
+//	ellRes[0] = (float) highest.xc;
+//	ellRes[1] = (float) highest.yc;
+//	ellRes[2] = (float) highest.a;
+//	ellRes[3] = (float) highest.b;
+//	ellRes[4] = (float) highest.theta;
+//	ellRes[5] = -1;
+//	ellipse(image, Point(highest.xc, highest.yc), Size(highest.a, highest.b),
+//			highest.theta, 0, 360, Scalar(255, 0, 0), 1, 8, 0);
 
 }
 
 void mainRHT(Mat& inputMat, int rhtIteration, float* ellRes) {
-	srand(time(NULL));
-	ITERATION = rhtIteration;
-
-	Mat image = inputMat;
-	Mat rect(image.rows, image.cols, CV_8UC1);
-	minA = 0.125 * image.cols;
-	maxA = 0.5 * image.cols;
-	minB = 0.125 * image.rows;
-	maxB = 0.5 * image.rows;
-	maxTetha = 180;
-
-	std::vector<Titik> filteredPoints = getCandidatePoints(image);
-
-	//Inisialisasi 5 akumulator 1D
-	accumulatorSize = (image.cols > image.rows) ? image.cols : image.rows;
-	xAccumulator = std::vector<int>(accumulatorSize);
-	yAccumulator = std::vector<int>(accumulatorSize);
-	aAccumulator = std::vector<int>(accumulatorSize);
-	bAccumulator = std::vector<int>(accumulatorSize);
-	tAccumulator = std::vector<int>(accumulatorSize);
-
-	for (int i = 0; i < accumulatorSize; i++) {
-		xAccumulator[i] = 0;
-		yAccumulator[i] = 0;
-		aAccumulator[i] = 0;
-		bAccumulator[i] = 0;
-		tAccumulator[i] = 0;
-	}
-	highest.a = 0;
-	highest.b = 0;
-	highest.xc = 0;
-	highest.yc = 0;
-	highest.theta = 0;
-
-	for (int i = 0; i < ITERATION; i++) {
-		//std::cout << "Iteration : " << i << std::endl;
-		bool isValidParams = false;
-		EllipseParams params;
-		while (!isValidParams) {
-			std::vector<Titik> chosenPoints = getRandomPoints(filteredPoints,
-					sampleNumber, image);
-			params = solveEllipseMatrixEquation(image, chosenPoints);
-
-			//tidak ada parameter negatif//KENAPA KOK NGA DI BATASIN DI SINI AJA SIH BERT?????
-			if (params.a > 0 && params.b > 0 && params.xc > 0
-					&& params.yc > 0) {
-				isValidParams = true;
-			}
-		}
-		float ecc = ((float) params.b) / params.a;
-		if (ecc <= MAX_ECC && ecc >= MIN_ECC && params.a <= maxA
-				&& params.a >= minA && params.b <= maxB && params.b >= minB
-				&& params.xc > -1 && params.yc > -1
-				&& params.xc < accumulatorSize && params.yc < accumulatorSize) {
-
-			if (params.theta < 0) {
-				params.theta += 360;
-			}
-
-			int aCounter = aAccumulator[params.a];
-			int bCounter = bAccumulator[params.b];
-			int xCounter = xAccumulator[params.xc];
-			int yCounter = yAccumulator[params.yc];
-			int tCounter = tAccumulator[params.theta];
-
-			aAccumulator[params.a] = aCounter + 1;
-			aAccumulator[params.b] = bCounter + 1;
-			aAccumulator[params.xc] = xCounter + 1;
-			aAccumulator[params.yc] = yCounter + 1;
-			aAccumulator[params.theta] = tCounter + 1;
-
-			if (aAccumulator[highest.a] < aCounter + 1) {
-				highest.a = params.a;
-			}
-			if (aAccumulator[highest.b] < bCounter + 1) {
-				highest.b = params.b;
-			}
-			if (aAccumulator[highest.xc] < xCounter + 1) {
-				highest.xc = params.xc;
-			}
-			if (aAccumulator[highest.yc] < yCounter + 1) {
-				highest.yc = params.yc;
-			}
-			if (aAccumulator[highest.theta] < tCounter + 1) {
-				highest.theta = params.theta;
-			}
-		}
-	}
-	ellRes[0] = (float) highest.xc;
-	ellRes[1] = (float) highest.yc;
-	ellRes[2] = (float) highest.a;
-	ellRes[3] = (float) highest.b;
-	ellRes[4] = (float) highest.theta;
-	ellRes[5] = -1;
-	ellipse(image, Point(highest.xc, highest.yc), Size(highest.a, highest.b),
-			highest.theta, 0, 360, Scalar(255, 0, 0), 1, 8, 0);
+//	srand(time(NULL));
+//	ITERATION = rhtIteration;
+//
+//	Mat image = inputMat;
+//	Mat rect(image.rows, image.cols, CV_8UC1);
+//	minA = 0.125 * image.cols;
+//	maxA = 0.5 * image.cols;
+//	minB = 0.125 * image.rows;
+//	maxB = 0.5 * image.rows;
+//	maxTetha = 180;
+//
+//	std::vector<Titik> filteredPoints = getCandidatePoints(image);
+//
+//	//Inisialisasi 5 akumulator 1D
+//	accumulatorSize = (image.cols > image.rows) ? image.cols : image.rows;
+//	xAccumulator = std::vector<int>(accumulatorSize);
+//	yAccumulator = std::vector<int>(accumulatorSize);
+//	aAccumulator = std::vector<int>(accumulatorSize);
+//	bAccumulator = std::vector<int>(accumulatorSize);
+//	tAccumulator = std::vector<int>(accumulatorSize);
+//
+//	for (int i = 0; i < accumulatorSize; i++) {
+//		xAccumulator[i] = 0;
+//		yAccumulator[i] = 0;
+//		aAccumulator[i] = 0;
+//		bAccumulator[i] = 0;
+//		tAccumulator[i] = 0;
+//	}
+//	highest.a = 0;
+//	highest.b = 0;
+//	highest.xc = 0;
+//	highest.yc = 0;
+//	highest.theta = 0;
+//
+//	for (int i = 0; i < ITERATION; i++) {
+//		//std::cout << "Iteration : " << i << std::endl;
+//		bool isValidParams = false;
+//		EllipseParams params;
+//		while (!isValidParams) {
+//			std::vector<Titik> chosenPoints = getRandomPoints(filteredPoints,
+//					sampleNumber, image);
+//			params = solveEllipseMatrixEquation(image, chosenPoints);
+//
+//			//tidak ada parameter negatif//KENAPA KOK NGA DI BATASIN DI SINI AJA SIH BERT?????
+//			if (params.a > 0 && params.b > 0 && params.xc > 0
+//					&& params.yc > 0) {
+//				isValidParams = true;
+//			}
+//		}
+//		float ecc = ((float) params.b) / params.a;
+//		if (ecc <= MAX_ECC && ecc >= MIN_ECC && params.a <= maxA
+//				&& params.a >= minA && params.b <= maxB && params.b >= minB
+//				&& params.xc > -1 && params.yc > -1
+//				&& params.xc < accumulatorSize && params.yc < accumulatorSize) {
+//
+//			if (params.theta < 0) {
+//				params.theta += 360;
+//			}
+//
+//			int aCounter = aAccumulator[params.a];
+//			int bCounter = bAccumulator[params.b];
+//			int xCounter = xAccumulator[params.xc];
+//			int yCounter = yAccumulator[params.yc];
+//			int tCounter = tAccumulator[params.theta];
+//
+//			aAccumulator[params.a] = aCounter + 1;
+//			aAccumulator[params.b] = bCounter + 1;
+//			aAccumulator[params.xc] = xCounter + 1;
+//			aAccumulator[params.yc] = yCounter + 1;
+//			aAccumulator[params.theta] = tCounter + 1;
+//
+//			if (aAccumulator[highest.a] < aCounter + 1) {
+//				highest.a = params.a;
+//			}
+//			if (aAccumulator[highest.b] < bCounter + 1) {
+//				highest.b = params.b;
+//			}
+//			if (aAccumulator[highest.xc] < xCounter + 1) {
+//				highest.xc = params.xc;
+//			}
+//			if (aAccumulator[highest.yc] < yCounter + 1) {
+//				highest.yc = params.yc;
+//			}
+//			if (aAccumulator[highest.theta] < tCounter + 1) {
+//				highest.theta = params.theta;
+//			}
+//		}
+//	}
+//	ellRes[0] = (float) highest.xc;
+//	ellRes[1] = (float) highest.yc;
+//	ellRes[2] = (float) highest.a;
+//	ellRes[3] = (float) highest.b;
+//	ellRes[4] = (float) highest.theta;
+//	ellRes[5] = -1;
+//	ellipse(image, Point(highest.xc, highest.yc), Size(highest.a, highest.b),
+//			highest.theta, 0, 360, Scalar(255, 0, 0), 1, 8, 0);
 
 }
 

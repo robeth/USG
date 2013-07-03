@@ -47,7 +47,10 @@ public class LoginActivity extends Activity {
 
 		this.deleteDatabase(USGDBHelper.DATABASE_NAME);
 		helper = USGDBHelper.getInstance(this);
-		helper.echo();
+		helper.open();
+		//helper.echo();
+		helper.test();
+		helper.close();
 		setContentView(R.layout.login);
 		loginContainer = (RelativeLayout) findViewById(R.id.login_container);
 		usernameField = (EditText) findViewById(R.id.username);
@@ -55,7 +58,8 @@ public class LoginActivity extends Activity {
 		loginButton = (Button) findViewById(R.id.login);
 
 		loginButton.setOnClickListener(loginListener);
-
+		gotoHomeScreen("user6", false);
+		
 	}
 
 	private void gotoHomeScreen(String username, boolean status) {
