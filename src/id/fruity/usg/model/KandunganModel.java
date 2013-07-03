@@ -11,6 +11,8 @@ public class KandunganModel extends USGModel<KandunganModel> implements Comparab
 	private int noKandungan;
 	private boolean isFinish;
 	private ArrayList<Photo> fotos;
+	private ArrayList<Boolean> validateStatuses;
+	private int status;
 
 	public KandunganModel(String idPasien, int noKandungan, boolean isFinish) {
 		super();
@@ -54,6 +56,15 @@ public class KandunganModel extends USGModel<KandunganModel> implements Comparab
 		this.fotos = fotos;
 	}
 
+	
+	public ArrayList<Boolean> getValidateStatuses() {
+		return validateStatuses;
+	}
+
+	public void setValidateStatuses(ArrayList<Boolean> validateStatuses) {
+		this.validateStatuses = validateStatuses;
+	}
+
 	@Override
 	public ArrayList<KandunganModel> getItems(Cursor c) {
 		ArrayList<KandunganModel> kans = new ArrayList<KandunganModel>();
@@ -65,6 +76,15 @@ public class KandunganModel extends USGModel<KandunganModel> implements Comparab
 		}
 		c.close();
 		return kans;
+	}
+	
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 	@Override

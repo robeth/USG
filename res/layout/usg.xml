@@ -49,7 +49,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/choice"
                 android:layout_marginTop="10dp"
                 android:text="HC"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -73,39 +72,67 @@
                 android:layout_marginTop="10dp"
                 android:text="Scale"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+            <TextView
+                android:id="@+id/usg_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/usg_scale"
+                android:layout_marginTop="10dp"
+                android:text="GA"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <EditText
+            <TextView
                 android:id="@+id/usg_hc_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/usg_hc"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="30dp"
                 android:layout_toRightOf="@id/usg_hc"
-                android:editable="false"
+                android:enabled="false"
                 android:hint="@string/usg_hc_default"
-                android:inputType="numberDecimal" >
-            </EditText>
+                android:inputType="numberDecimal"
+                android:textColor="#FF444444"
+                android:textSize="18sp" >
+            </TextView>
 
-            <EditText
+            <TextView
                 android:id="@+id/usg_bpd_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/usg_hc_value"
                 android:layout_alignTop="@+id/usg_bpd"
-                android:editable="false"
+                android:enabled="false"
                 android:hint="@string/usg_bpd_default"
-                android:inputType="numberDecimal" />
+                android:inputType="numberDecimal"
+                android:textColor="#FF444444"
+                android:textSize="18sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/usg_scale_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/usg_hc_value"
                 android:layout_alignTop="@+id/usg_scale"
-                android:editable="false"
+                android:enabled="false"
                 android:hint="@string/usg_bpd_default"
-                android:inputType="numberDecimal" />
+                android:inputType="numberDecimal"
+                android:textColor="#FF444444"
+                android:textSize="18sp" />
 
+            <TextView
+                android:id="@+id/usg_age_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/usg_hc_value"
+                android:layout_alignTop="@+id/usg_age"
+                android:enabled="false"
+                android:hint="@string/usg_bpd_default"
+                android:inputType="numberDecimal"
+                android:textColor="#FF444444"
+                android:textSize="18sp" />
+            
             <RelativeLayout
                 android:id="@+id/usg_params_container"
                 android:layout_width="wrap_content"
@@ -231,7 +258,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:layout_margin="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
                 android:text="X"
                 android:textColor="#FF000000" />
 
@@ -248,7 +278,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@id/seek_x_text"
-                android:layout_margin="5dp"
+               android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
                 android:text="Y"
                 android:textColor="#FF000000" />
 
@@ -265,7 +298,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@id/seek_y_text"
-                android:layout_margin="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
                 android:text="A"
                 android:textColor="#FF000000" />
 
@@ -282,7 +318,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@id/seek_a_text"
-                android:layout_margin="5dp"
+               android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
                 android:text="B"
                 android:textColor="#FF000000" />
 
@@ -299,7 +338,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@id/seek_b_text"
-                android:layout_margin="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
                 android:text="T"
                 android:textColor="#FF000000" />
 

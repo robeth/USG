@@ -1,9 +1,13 @@
 package id.fruity.usg;
 
 import id.fruity.usg.database.USGDBHelper;
+import id.fruity.usg.database.converter.DoctorConverter;
 import id.fruity.usg.database.converter.PatientConverter;
+import id.fruity.usg.database.converter.UserConverter;
 import id.fruity.usg.database.table.entry.Comment;
+import id.fruity.usg.database.table.entry.Doctor;
 import id.fruity.usg.database.table.entry.Patient;
+import id.fruity.usg.database.table.entry.User;
 import id.fruity.usg.model.KomentarModel;
 import id.fruity.usg.util.DateUtils;
 
@@ -31,6 +35,7 @@ public class MessageFragment extends SherlockFragment {
 	private String patientId;
 	private String userId;
 	private boolean isDoctor;
+	private User ud;
 	private Patient p;
 	private ArrayList<KomentarModel> kms;
 	@Override
@@ -45,6 +50,9 @@ public class MessageFragment extends SherlockFragment {
         helper = USGDBHelper.getInstance(getActivity());
         helper.open();
         p = PatientConverter.convert(helper.getPasien(patientId));
+        if(isDoctor){
+        	ud = UserConverter.convert(helper.getUser(userId));
+        }
         KomentarModel k = new KomentarModel();
         kms = k.getItems(helper.getKomentarOf(patientId));
         Log.d("Message Fragment", "Komentar size:"+kms.size());
@@ -98,7 +106,7 @@ public class MessageFragment extends SherlockFragment {
 			helper.insertComment(k);
 			helper.close();
 			
-			messages.add(new Message(inputMessage.getText().toString(), DateUtils.getCurrentString(), "Pasien 1", R.drawable.mother_icon, true));
+			messages.add(new Message(inputMessage.getText().toString(), DateUtils.getCurrentString(), isDoctor ? ud.getName():p.getName(), (isDoctor)? R.drawable.doctor_icon: R.drawable.mother_icon, !isDoctor));
 			mAdapter.notifyDataSetChanged();
 		}
 	};

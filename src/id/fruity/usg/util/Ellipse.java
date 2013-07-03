@@ -1,6 +1,7 @@
 package id.fruity.usg.util;
 
 public class Ellipse {
+	public static float SCALING = 0.313f;
 	public static float keliling(float a, float b){
 		int digits = 5;
 		float x = Math.max(a, b);

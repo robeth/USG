@@ -33,7 +33,7 @@ public class AddPatientActivity extends SherlockActivity {
 	private USGDBHelper helper;
 	private ImageView photoView;
 	private TextView ageText;
-	private EditText nameText, addressText, phoneText, infoText;
+	private EditText ktpText, nameText, addressText, phoneText, infoText;
 	public static final int MEDIA_TYPE_IMAGE = 1;
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 	private File imageFile;
@@ -62,6 +62,7 @@ public class AddPatientActivity extends SherlockActivity {
 		helper = USGDBHelper.getInstance(this);
 
 		photoView = (ImageView) findViewById(R.id.patient_photo);
+		ktpText = (EditText) findViewById(R.id.patient_ktp);
 		ageText = (TextView) findViewById(R.id.patient_age);
 		nameText = (EditText) findViewById(R.id.patient_name);
 		addressText = (EditText) findViewById(R.id.patient_address);
@@ -97,7 +98,7 @@ public class AddPatientActivity extends SherlockActivity {
 			if (isValidInputs()) {
 				helper.open();
 				Long currentTime = DateUtils.getCurrentLong();
-				int lastIndex = helper.getLastIndexOfPatient();
+				String ktp = ktpText.getText().toString();
 				String name = nameText.getText().toString();
 				String address = addressText.getText().toString();
 				String phone = phoneText.getText().toString();
@@ -111,10 +112,10 @@ public class AddPatientActivity extends SherlockActivity {
 					photoCurrentTime = -1;
 				}
 				Patient p = new Patient("-1", true, true, currentTime,
-						currentTime, lastIndex + 1 + "", name, address, phone,
+						currentTime, ktp, name, address, phone,
 						-1, imagePath, description, photoCurrentTime, -1);
 				Serve m = new Serve(-1, true, true, currentTime, currentTime,
-						puskesmasId, "" + (lastIndex + 1), "-1");
+						puskesmasId, "" + ktp, "-1");
 				helper.insertPatient(p);
 				helper.insertServe(m);
 				helper.close();

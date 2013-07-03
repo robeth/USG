@@ -28,6 +28,7 @@ import id.fruity.usg.database.table.entry.WorksOn;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.util.Log;
 
 public class Synchonization {
 	public static Activity A;
@@ -557,6 +558,7 @@ public class Synchonization {
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
+			Log.d("From server", entries[i].toString());
 			entries[i].onServerAdd();
 			helper.insertPatient(entries[i]);
 		}
@@ -618,9 +620,11 @@ public class Synchonization {
 		}
 		helper.open();
 		for(int i = 0; i < entries.length; i++){
-			int lastNumber = helper.getLastIndexofKomentar(entries[i].getServerId3());
-			entries[i].onServerAdd(lastNumber+1);
-			helper.insertComment(entries[i]);
+			if(!helper.isCommentExist(entries[i].getServerId3(), entries[i].getServerId())){
+				int lastNumber = helper.getLastIndexofKomentar(entries[i].getServerId3());
+				entries[i].onServerAdd(lastNumber+1);
+				helper.insertComment(entries[i]);
+			}
 		}
 		helper.close();
 	}

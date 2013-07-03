@@ -71,7 +71,7 @@ public class Pregnancy extends USGTableEntry {
 	public String toString() {
 		return "Pregnancy [noKandungan=" + noKandungan + ", idPasien="
 				+ idPasien + ", isFinish=" + isFinish + ", serverId="
-				+ serverId + ", serverId2=" + serverId2 + "]";
+				+ serverId + ", serverId2=" + serverId2 + "] isActive" + isActive() + " - isDity" + isDirty();
 	}
 	
 	public void onServerAdd(){

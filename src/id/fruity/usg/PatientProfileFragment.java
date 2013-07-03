@@ -21,7 +21,8 @@ public class PatientProfileFragment extends SherlockFragment {
 	 private String patientId;
 	 private ImageView photoView;
 	 private TextView ageText;
-	 private EditText nameText, addressText, phoneText, infoText;
+	 private EditText nameText, addressText, phoneText, infoText, ktpText;
+	 private String bName, bAddress, bPhone, bInfo, bKtp;
 	 
 	@Override
      public void onCreate(Bundle savedInstanceState) {
@@ -49,11 +50,12 @@ public class PatientProfileFragment extends SherlockFragment {
          addressText = (EditText) v.findViewById(R.id.patient_address);
          phoneText = (EditText) v.findViewById(R.id.patient_phone);
          infoText = (EditText) v.findViewById(R.id.patient_info);
-         
+         ktpText = (EditText) v.findViewById(R.id.patient_ktp);
          nameText.setText(p.getName());
          addressText.setText(p.getAddress());
          phoneText.setText(p.getPhone());
          infoText.setText(p.getDescription());
+         ktpText.setText(p.getIdPasien());
          
          setEditable(false);
          
@@ -66,7 +68,7 @@ public class PatientProfileFragment extends SherlockFragment {
     	 addressText.setEnabled(status);
     	 phoneText.setEnabled(status);
     	 infoText.setEnabled(status);
-    	 
+    	 ktpText.setEnabled(false);
      }
 
 	public void notifyHasEditted() {
@@ -81,5 +83,28 @@ public class PatientProfileFragment extends SherlockFragment {
 		helper.open();
 		helper.updatePatient(p);
 		helper.close();
+		setEditable(false);
+	}
+	
+	public void notifyNotEditted(){
+		restoreData();
+		setEditable(false);
+	}
+
+	public void backupData() {
+		// TODO Auto-generated method stub
+		bName = nameText.getText().toString();
+		bAddress = addressText.getText().toString();
+		bPhone = phoneText.getText().toString();
+		bInfo = infoText.getText().toString();
+		bKtp = ktpText.getText().toString();
+	}
+	
+	private void restoreData(){
+		nameText.setText(bName);
+		addressText.setText(bAddress);
+		phoneText.setText(bPhone);
+		infoText.setText(bInfo);
+		ktpText.setText(bKtp);
 	}
 }

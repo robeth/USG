@@ -43,4 +43,19 @@ public class ProportionalityFunction {
 		}
 		return res;
 	}
+	
+	public static float idealTow(float tow, float age){
+		return (float) ((299.1 - (31.85 * age) + (1.094 * Math.pow(age, 2)) - (0.01055 * Math
+				.pow(age, 3))) * 0.01 * tow * (float) (1 + 0));
+	}
+	
+	public static float lowerTow(float tow, float age){
+		return (float) ((299.1 - (31.85 * age) + (1.094 * Math.pow(age, 2)) - (0.01055 * Math
+				.pow(age, 3))) * 0.01 * tow * (float) (1  -DEFAULT_CENTILE_WEIGHT));
+	}
+	
+	public static float upperTow(float tow, float age){
+		return (float) ((299.1 - (31.85 * age) + (1.094 * Math.pow(age, 2)) - (0.01055 * Math
+				.pow(age, 3))) * 0.01 * tow * (float) (1  +DEFAULT_CENTILE_WEIGHT));
+	}
 }

@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+environment/project/0.25262885/NDKROOT/delimiter=;
+environment/project/0.25262885/NDKROOT/operation=replace
+environment/project/0.25262885/NDKROOT/value=/home/fruity/Documents/android-ndk-r8d
+environment/project/0.25262885/OCVAndroid/delimiter=\:
+environment/project/0.25262885/OCVAndroid/operation=replace
+environment/project/0.25262885/OCVAndroid/value=/home/fruity/Documents/OpenCV-2.4.4-android-sdk
+environment/project/0.25262885/append=true
+environment/project/0.25262885/appendContributed=true

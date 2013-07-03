@@ -112,7 +112,9 @@ public class Comment extends USGTableEntry {
 	
 	
 	
-	
+	public int getServerId() {
+		return serverId;
+	}
 
 	public String getServerId3() {
 		return serverId3;

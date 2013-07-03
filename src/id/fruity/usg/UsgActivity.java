@@ -7,6 +7,7 @@ import id.fruity.usg.database.converter.ValidationConverter;
 import id.fruity.usg.database.table.entry.Patient;
 import id.fruity.usg.database.table.entry.Photo;
 import id.fruity.usg.database.table.entry.Validation;
+import id.fruity.usg.grow.GestationalAge;
 import id.fruity.usg.util.DateUtils;
 import id.fruity.usg.util.Ellipse;
 import id.fruity.usg.util.SDUtils;
@@ -65,7 +66,7 @@ public class UsgActivity extends SherlockActivity {
 	private USGDBHelper helper;
 
 	private ImageView usgImage;
-	private TextView hc, bpd, x, y, a, b, theta, scale;
+	private TextView hc, bpd, x, y, a, b, theta, scale, age;
 	private Bitmap sourceBitmap, tempBitmap;
 	private RelativeLayout basicContainer, seekContainer;
 	private SeekBar seekX, seekY, seekA, seekB, seekT;
@@ -145,6 +146,7 @@ public class UsgActivity extends SherlockActivity {
 		x = (TextView) findViewById(R.id.usg_params_x_value);
 		y = (TextView) findViewById(R.id.usg_params_y_value);
 		theta = (TextView) findViewById(R.id.usg_params_t_value);
+		age = (TextView) findViewById(R.id.usg_age_value);
 		methodSpinner = (Spinner) findViewById(R.id.usg_methods);
 		choiceSpinner = (Spinner) findViewById(R.id.choice);
 		methodSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -240,6 +242,8 @@ public class UsgActivity extends SherlockActivity {
 					boolean fromUser) {
 				if (isOpenCVLoaded) {
 					currentA = progress;
+					if (currentA < currentB)
+						seekB.setProgress(Math.max(currentA - 1, 0));
 					markEllipseValidation();
 				}
 			}
@@ -253,6 +257,7 @@ public class UsgActivity extends SherlockActivity {
 
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
+
 			}
 
 			@Override
@@ -260,6 +265,8 @@ public class UsgActivity extends SherlockActivity {
 					boolean fromUser) {
 				if (isOpenCVLoaded) {
 					currentB = progress;
+					if (currentA < currentB)
+						seekA.setProgress(currentB + 1);
 					markEllipseValidation();
 				}
 			}
@@ -290,7 +297,7 @@ public class UsgActivity extends SherlockActivity {
 		Drawable usgPhoto = SDUtils.getDrawable(this, SDUtils
 				.getBigPhotoBitmap(SDUtils.getAbsolutePath(currentPhoto
 						.getFilename())));
-		Log.d("New Image!!", "Status:"+(usgPhoto != null));
+		Log.d("New Image!!", "Status:" + (usgPhoto != null));
 		if (usgPhoto != null) {
 			usgImage.setImageDrawable(usgPhoto);
 		}
@@ -331,14 +338,17 @@ public class UsgActivity extends SherlockActivity {
 
 	private void updateParameterBox(int position) {
 		Validation v = choices.get(position);
-		hc.setText(Ellipse.keliling(v.getA(), v.getB()) + " cm");
-		bpd.setText(Ellipse.area(v.getA(), v.getB()) + " cm");
+		float hcVal = r(Ellipse.keliling(v.getA(), v.getB()) * 0.1f
+				* Ellipse.SCALING);
+		hc.setText(hcVal + " cm");
+		bpd.setText(r(2 * v.getB() * 0.1f * Ellipse.SCALING) + " cm");
 		a.setText(v.getA() + "");
 		b.setText(v.getB() + "");
 		x.setText(v.getX() + "");
 		y.setText(v.getY() + "");
 		theta.setText(v.getTheta() + "");
 		scale.setText(currentPhoto.getScale() + "");
+		age.setText(r(GestationalAge.approximateGA1(hcVal)) + " week");
 	}
 
 	private int getCurrentMethod(String method) {
@@ -426,6 +436,10 @@ public class UsgActivity extends SherlockActivity {
 
 		Utils.matToBitmap(m1, tempBitmap);
 		usgImage.setImageBitmap(tempBitmap);
+		choiceAdapter = new ValidationSpinnerAdapter(choices,
+				getLayoutInflater());
+		choiceSpinner.setAdapter(choiceAdapter);
+		choiceAdapter.notifyDataSetChanged();
 
 	}
 
@@ -480,9 +494,9 @@ public class UsgActivity extends SherlockActivity {
 	public static native float[] RHT(long matAddrGr);
 
 	public static native float[] IRHT(long matAddrGr);
-	
+
 	public static native float[] PSO(long matAddrGr);
-	
+
 	public static native void Mark(long matAddrrGr, float a, float b, float x,
 			float y, float theta);
 
@@ -505,11 +519,12 @@ public class UsgActivity extends SherlockActivity {
 				seekB.setProgress((int) (v.getB()));
 				seekT.setProgress((int) (v.getTheta()));
 			}
-			menu.add("Accept")
-					.setIcon(R.drawable.navigation_accept)
-					.setShowAsAction(
-							MenuItem.SHOW_AS_ACTION_ALWAYS
-									| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+			menu.add("Accept").setShowAsAction(
+					MenuItem.SHOW_AS_ACTION_ALWAYS
+							| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+			menu.add("Cancel").setShowAsAction(
+					MenuItem.SHOW_AS_ACTION_ALWAYS
+							| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 			return true;
 		}
 
@@ -520,53 +535,63 @@ public class UsgActivity extends SherlockActivity {
 
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-			Toast.makeText(UsgActivity.this, "Validation saved!",
-					Toast.LENGTH_SHORT).show();
-			Long currentTime = DateUtils.getCurrentLong();
-			if (!hasContributed) {
-				Validation validation = new Validation("-1", true, true,
-						currentTime, currentTime, userId,
-						currentPhoto.getNoPhoto(),
-						currentPhoto.getNoKandungan(),
-						currentPhoto.getIdPasien(), seekX.getProgress(),
-						seekY.getProgress(), seekA.getProgress(),
-						seekB.getProgress(), seekT.getProgress(), false,
-						currentPhoto.getServerId(), -1, "-1");
-				helper.open();
-				helper.insertValidation(validation);
-				helper.close();
+			if (item.getTitle().equals("Confirm")) {
+				Toast.makeText(UsgActivity.this,
+						"Validation is successfully saved", Toast.LENGTH_SHORT)
+						.show();
+				Long currentTime = DateUtils.getCurrentLong();
+				if (!hasContributed) {
+					Validation validation = new Validation("-1", true, true,
+							currentTime, currentTime, userId,
+							currentPhoto.getNoPhoto(),
+							currentPhoto.getNoKandungan(),
+							currentPhoto.getIdPasien(), seekX.getProgress(),
+							seekY.getProgress(), seekA.getProgress(),
+							seekB.getProgress(), seekT.getProgress(), false,
+							currentPhoto.getServerId(), -1, "-1");
+					helper.open();
+					helper.insertValidation(validation);
+					helper.close();
 
-				choices.add(validation);
-				hasContributed = true;
-				contributionPosition = choices.size() - 1;
+					choices.add(validation);
+					hasContributed = true;
+					contributionPosition = choices.size() - 1;
+					validateMode.finish();
+
+					choiceAdapter.notifyDataSetChanged();
+					choiceSpinner.setSelection(contributionPosition);
+					updateParameterBox(contributionPosition);
+
+				} else {
+					Validation v = choices.get(contributionPosition);
+					v.setX(seekX.getProgress());
+					v.setY(seekY.getProgress());
+					v.setA(seekA.getProgress());
+					v.setB(seekB.getProgress());
+					v.setTheta(seekT.getProgress());
+					v.setModifyTimestampLong(currentTime);
+					v.setDirty(true);
+					helper.open();
+					helper.updateValidation(v);
+					helper.close();
+					validateMode.finish();
+
+					choiceAdapter.notifyDataSetChanged();
+					choiceSpinner.setSelection(contributionPosition);
+					updateParameterBox(contributionPosition);
+				}
+			} else if (item.getTitle().equals("Cancel")){
+				Toast.makeText(UsgActivity.this,
+						"Validation is not saved", Toast.LENGTH_SHORT)
+						.show();
 				validateMode.finish();
-
-				choiceAdapter.notifyDataSetChanged();
-				choiceSpinner.setSelection(contributionPosition);
-				updateParameterBox(contributionPosition);
-
-			} else {
-				Validation v = choices.get(contributionPosition);
-				v.setX(seekX.getProgress());
-				v.setY(seekY.getProgress());
-				v.setA(seekA.getProgress());
-				v.setB(seekB.getProgress());
-				v.setTheta(seekT.getProgress());
-				v.setModifyTimestampLong(currentTime);
-				v.setDirty(true);
-				helper.open();
-				helper.updateValidation(v);
-				helper.close();
-				validateMode.finish();
-
-				choiceAdapter.notifyDataSetChanged();
-				choiceSpinner.setSelection(contributionPosition);
 			}
 			return true;
 		}
 
 		@Override
 		public void onDestroyActionMode(ActionMode mode) {
+			markEllipse(contributionPosition);
 			choiceSpinner.setVisibility(View.VISIBLE);
 			seekContainer.setVisibility(View.GONE);
 			basicContainer.setVisibility(View.VISIBLE);
@@ -578,8 +603,8 @@ public class UsgActivity extends SherlockActivity {
 		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 			choiceSpinner.setVisibility(View.GONE);
 			methodSpinner.setVisibility(View.VISIBLE);
-			menu.add("Accept")
-					.setIcon(R.drawable.navigation_accept)
+			menu.add("Refresh")
+					.setIcon(R.drawable.navigation_refresh)
 					.setShowAsAction(
 							MenuItem.SHOW_AS_ACTION_ALWAYS
 									| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -594,6 +619,8 @@ public class UsgActivity extends SherlockActivity {
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 			Log.d("AutomaticMode", (String) item.getTitle());
+			Toast.makeText(UsgActivity.this, "Approximation is saved",
+					Toast.LENGTH_SHORT).show();
 			approxEllipse();
 			return true;
 		}
@@ -603,5 +630,9 @@ public class UsgActivity extends SherlockActivity {
 			choiceSpinner.setVisibility(View.VISIBLE);
 			methodSpinner.setVisibility(View.GONE);
 		}
+	}
+	
+	public static float r(float paramFloat) {
+		return Float.parseFloat(String.format("%.2f%n", paramFloat));
 	}
 }

@@ -84,7 +84,15 @@ public class PatientListFragment extends SherlockFragment {
         return v;
     }
     
-    private void popUpDeletePatientDialog(final String iPatientId, final String iPatientName) {
+    
+    
+    @Override
+	public void onResume() {
+		super.onResume();
+		reloadData();
+	}
+
+	private void popUpDeletePatientDialog(final String iPatientId, final String iPatientName) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this.getActivity());
 		alert.setTitle("Delete "+iPatientName);
 		alert.setMessage("All related pregnancy and USG photo data will also be deleted.");
@@ -95,6 +103,7 @@ public class PatientListFragment extends SherlockFragment {
 						helper.open();
 						helper.deletePatient(iPatientId);
 						helper.close();
+						reloadData();
 					}
 				});
 

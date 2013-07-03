@@ -8,6 +8,7 @@ import id.fruity.usg.database.table.entry.Patient;
 import id.fruity.usg.database.table.entry.Photo;
 import id.fruity.usg.database.table.entry.Pregnancy;
 import id.fruity.usg.database.table.entry.Serve;
+import id.fruity.usg.database.table.entry.USGTableEntry;
 import id.fruity.usg.database.table.entry.User;
 import id.fruity.usg.database.table.entry.Validation;
 import id.fruity.usg.database.table.entry.WorksOn;
@@ -95,6 +96,7 @@ public class RemoteUtils {
 	String crlf = "\r\n";
 	String twoHyphens = "--";
 	String boundary = "*****";
+	private static USGTableEntry[] ute;
 
 	public static boolean uploadPhoto(String uploadUrl, String imagePath,
 			String ktp, long timestamp) {
@@ -242,11 +244,11 @@ public class RemoteUtils {
 		Log.d("Image path", imagePath + " -- " + downloadUrl);
 
 		try {
-			
+
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("ktp", ktp));
 			String parameters = getQuery(params);
-			
+
 			URL url = new URL(downloadUrl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(10000);
@@ -309,7 +311,7 @@ public class RemoteUtils {
 					pregnancyNumber + ""));
 			params.add(new BasicNameValuePair("photo_number", photoNumber + ""));
 			String parameters = getQuery(params);
-			
+
 			URL url = new URL(downloadUrl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(10000);
@@ -331,7 +333,6 @@ public class RemoteUtils {
 			writer.flush();
 			writer.close();
 			conn.connect();
-
 
 			InputStream inputStream = null;
 			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -396,10 +397,12 @@ public class RemoteUtils {
 		for (Patient p : patients) {
 			url = BASE_URL + DOWNLOADPATIENT_SUB_URL;
 			imagePath = SDUtils.getDefaultPath();
-			String temp = "patient_" + DateUtils.getSimpleCurrentString()+(counter++)
-					+ ".jpg";
+			String temp = "patient_" + DateUtils.getSimpleCurrentString()
+					+ (counter++) + ".jpg";
 			imagePath = defaultPath + temp;
-			Log.d("Patient download photo", "name:"+p.getName()+" -- local"+p.getPhotoTimestamp()+" global"+p.getServerPhotoTimestamp());
+			Log.d("Patient download photo",
+					"name:" + p.getName() + " -- local" + p.getPhotoTimestamp()
+							+ " global" + p.getServerPhotoTimestamp());
 			result = downloadPhoto(url, imagePath, p.getIdPasien());
 			if (result) {
 				Synchonization.successDownloadPatientPhoto(p, temp);
@@ -410,7 +413,8 @@ public class RemoteUtils {
 		for (Photo p : photos) {
 			url = BASE_URL + DOWNLOADUSG_SUB_URL;
 			imagePath = SDUtils.getDefaultPath();
-			String temp = "usg_" + DateUtils.getSimpleCurrentString() + (counter++)+".jpg";
+			String temp = "usg_" + DateUtils.getSimpleCurrentString()
+					+ (counter++) + ".jpg";
 			;
 			imagePath = defaultPath + temp;
 			result = downloadPhoto(url, imagePath, p.getIdPasien(),
@@ -1056,15 +1060,31 @@ public class RemoteUtils {
 
 			Patient[] patients = gson.fromJson(addRoot.getJSONArray("patient")
 					.toString(), Patient[].class);
+			ute = gson.fromJson(addRoot.getJSONArray("patient")
+					.toString(), USGTableEntry[].class);
+			Log.d("LJLKJ", addRoot.getJSONArray("patient").toString());
+			align(patients, ute);
 			Synchonization.addPatientEntriesFromServer(patients);
 			patients = gson.fromJson(updateRoot.getJSONArray("patient")
 					.toString(), Patient[].class);
+			ute = gson.fromJson(updateRoot.getJSONArray("patient")
+					.toString(), USGTableEntry[].class);
+			align(patients, ute);
 			Synchonization.updatePatientEntriesFromServer(patients);
 		} catch (JSONException e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
+	}
+
+	private static void align(USGTableEntry[] in, USGTableEntry[] superin) {
+		for(int i = 0; i < in.length; i++){
+			in[i].setActive(superin[i].isActive());
+			in[i].setDirty(superin[i].isDirty());
+			in[i].setModifyTimestampLong(superin[i].getModifyTimestampLong());
+			in[i].setCreateTimestampLong(superin[i].getCreateTimestampLong());
+		}
 	}
 
 	public static boolean syncPregnancy(long currentTimestamp) {
@@ -1094,7 +1114,7 @@ public class RemoteUtils {
 			for (Pregnancy p : updatePregnancies) {
 				updatePregnancyTable.put(new JSONObject(gson.toJson(p)));
 			}
-
+			Log.d("Mobile Preg", updatePregnancyTable.toString());
 			add.put("pregnancy", addPregnancyTable);
 			update.put("pregnancy", updatePregnancyTable);
 

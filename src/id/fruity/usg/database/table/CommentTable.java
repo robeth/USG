@@ -58,12 +58,10 @@ public class CommentTable extends USGTable<Comment> {
 		C_SERVER_ID4_PETUGAS
 	};
 	private static final String PRIMARY_CLAUSE = C_ID_NOCOMMENT + "=? AND "+ C_ID_USGPASIEN + "=?";
-	private static final String NEW_CLAUSE = C_ISACTIVE+"=1 AND ("+C_SERVER_ID+"=? OR "+C_SERVER_ID2_DOKTER
-			+"=? OR "+C_SERVER_ID3_PASIEN+"=? OR "+C_SERVER_ID4_PETUGAS
-			+"=? OR "+C_CREATESTAMP+" > ?)";
-	private static final String UPDATE_CLAUSE = "NOT ("+C_SERVER_ID+"=? OR "+C_SERVER_ID2_DOKTER
-			+"=? OR "+C_SERVER_ID3_PASIEN+"=? OR "+C_SERVER_ID4_PETUGAS
-			+"=?) AND ("+C_MODIFYSTAMP+" > ? OR "+C_DIRTY+"=1)";
+	private static final String NEW_CLAUSE = C_ISACTIVE+"=1 AND ("+C_SERVER_ID+"=? OR "
+			+ C_SERVER_ID3_PASIEN+"=? OR "+C_CREATESTAMP+" > ?)";
+	private static final String UPDATE_CLAUSE = "NOT ("+C_SERVER_ID+"=? OR "
+			+C_SERVER_ID3_PASIEN+"=?) AND ("+C_MODIFYSTAMP+" > ? OR "+C_DIRTY+"=1)";
 	private static final String SERVER_ID_CLAUSE = C_SERVER_ID + "=? AND "+ C_SERVER_ID3_PASIEN + "=?";
 	
 	public CommentTable(){

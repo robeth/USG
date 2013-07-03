@@ -1,28 +1,30 @@
 package id.fruity.usg.database;
 
-import id.fruity.usg.database.table.USGTable;
-import id.fruity.usg.database.table.WorksOnTable;
-import id.fruity.usg.database.table.DoctorTable;
-import id.fruity.usg.database.table.PregnancyTable;
-import id.fruity.usg.database.table.CommentTable;
-import id.fruity.usg.database.table.ServeTable;
-import id.fruity.usg.database.table.PatientTable;
-import id.fruity.usg.database.table.OfficerTable;
+import id.fruity.usg.database.converter.PatientConverter;
+import id.fruity.usg.database.converter.PregnancyConverter;
 import id.fruity.usg.database.table.ClinicTable;
+import id.fruity.usg.database.table.CommentTable;
+import id.fruity.usg.database.table.DoctorTable;
+import id.fruity.usg.database.table.OfficerTable;
+import id.fruity.usg.database.table.PatientTable;
 import id.fruity.usg.database.table.PhotoTable;
+import id.fruity.usg.database.table.PregnancyTable;
+import id.fruity.usg.database.table.ServeTable;
+import id.fruity.usg.database.table.USGTable;
 import id.fruity.usg.database.table.UserTable;
 import id.fruity.usg.database.table.ValidationTable;
-import id.fruity.usg.database.table.entry.WorksOn;
-import id.fruity.usg.database.table.entry.Doctor;
-import id.fruity.usg.database.table.entry.Pregnancy;
-import id.fruity.usg.database.table.entry.Comment;
-import id.fruity.usg.database.table.entry.Serve;
-import id.fruity.usg.database.table.entry.Patient;
-import id.fruity.usg.database.table.entry.Officer;
+import id.fruity.usg.database.table.WorksOnTable;
 import id.fruity.usg.database.table.entry.Clinic;
+import id.fruity.usg.database.table.entry.Comment;
+import id.fruity.usg.database.table.entry.Doctor;
+import id.fruity.usg.database.table.entry.Officer;
+import id.fruity.usg.database.table.entry.Patient;
 import id.fruity.usg.database.table.entry.Photo;
+import id.fruity.usg.database.table.entry.Pregnancy;
+import id.fruity.usg.database.table.entry.Serve;
 import id.fruity.usg.database.table.entry.User;
 import id.fruity.usg.database.table.entry.Validation;
+import id.fruity.usg.database.table.entry.WorksOn;
 import id.fruity.usg.util.DateUtils;
 import android.content.ContentValues;
 import android.content.Context;
@@ -310,6 +312,13 @@ public class USGDBHelper extends SQLiteOpenHelper {
 		return result;
 	}
 	
+	public boolean isCommentExist(String patientId, int serverCommentNumber){
+		Cursor c = database.rawQuery("select * from "+CommentTable.TABLE_NAME+" where "+CommentTable.C_SERVER_ID+"=? and "+CommentTable.C_SERVER_ID3_PASIEN+"=?", new String[]{serverCommentNumber+"", patientId});
+		boolean result = c.getCount() > 0;
+		c.close();
+		return result;
+	}
+	
 	public boolean isUserPassMatch(String username, String password){
 		Cursor c = database.rawQuery("select * from "+UserTable.TABLE_NAME+" where "+UserTable.C_USERNAME+"=? and "+UserTable.C_PASSWORD+"=? ", new String[]{username, password});
 		boolean result = c.getCount() > 0;
@@ -368,7 +377,7 @@ public class USGDBHelper extends SQLiteOpenHelper {
 	
 	public Cursor getPatientOverview(int puskesmasId){
 		return database.rawQuery("select a."+PatientTable.C_ID+", a."+PatientTable.C_NAME+", b.totalfoto, b.terakhir, c.totalpesanbaru, d.totalvalidasibaru"
-				+ " from (select x."+ PatientTable.C_ID+ ", x."+PatientTable.C_NAME+" from "+PatientTable.TABLE_NAME+" x, "+ServeTable.TABLE_NAME+" y,"+ClinicTable.TABLE_NAME+" z where x."+PatientTable.C_ID+" = y."+ServeTable.C_ID_PASIEN+" and y."+ServeTable.C_ID_PUSKESMAS+" = z."+ClinicTable.C_ID+" and z."+ClinicTable.C_ID+" =?) a left outer join "
+				+ " from (select x."+ PatientTable.C_ID+ ", x."+PatientTable.C_NAME+" from "+PatientTable.TABLE_NAME+" x, "+ServeTable.TABLE_NAME+" y,"+ClinicTable.TABLE_NAME+" z where x."+PatientTable.C_ISACTIVE+"=1 and x."+PatientTable.C_ID+" = y."+ServeTable.C_ID_PASIEN+" and y."+ServeTable.C_ID_PUSKESMAS+" = z."+ClinicTable.C_ID+" and z."+ClinicTable.C_ID+" =?) a left outer join "
 				+ "(select "+PhotoTable.C_ID_PASIEN+" as id_pasien, count(*) as totalfoto ,max("+PhotoTable.C_CREATESTAMP+") as terakhir from "+PhotoTable.TABLE_NAME+" group by "+PhotoTable.C_ID_PASIEN+")b on a."+PatientTable.C_ID+" = b.id_pasien left outer join "
 				+ "(select "+CommentTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalpesanbaru from "+CommentTable.TABLE_NAME+" where "+CommentTable.C_HASSEEN+" = 0 and "+CommentTable.C_FROM_DOCTOR+"=1 group by "+CommentTable.C_ID_USGPASIEN+") c on a."+PatientTable.C_ID+" = c.id_pasien left outer join "
 				+ "(select "+ValidationTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalvalidasibaru from "+ValidationTable.TABLE_NAME+" where "+ValidationTable.C_HASSEEN+" = 0 group by "+ValidationTable.C_ID_USGPASIEN+") d on a."+PatientTable.C_ID+" = d.id_pasien", new String[]{""+puskesmasId});
@@ -379,7 +388,7 @@ public class USGDBHelper extends SQLiteOpenHelper {
 				+ " from (select x."+ PatientTable.C_ID+ ", x."+PatientTable.C_NAME+" from "+PatientTable.TABLE_NAME+" x, "+ServeTable.TABLE_NAME+" y,"+ClinicTable.TABLE_NAME+" z where x."+PatientTable.C_ID+" = y."+ServeTable.C_ID_PASIEN+" and y."+ServeTable.C_ID_PUSKESMAS+" = z."+ClinicTable.C_ID+" and z."+ClinicTable.C_ID+" in (select CC."+ClinicTable.C_ID+" from "+ClinicTable.TABLE_NAME+" CC, "+DoctorTable.TABLE_NAME+" DD, "+WorksOnTable.TABLE_NAME+" WW where CC."+ClinicTable.C_ID+" = WW."+WorksOnTable.C_ID_PUSKESMAS+" and DD."+DoctorTable.C_ID_USER+" = WW."+WorksOnTable.C_ID_DOKTER+" and DD."+DoctorTable.C_ID_USER+"=?)) a left outer join "
 				+ "(select "+PhotoTable.C_ID_PASIEN+" as id_pasien, count(*) as totalfoto ,max("+PhotoTable.C_CREATESTAMP+") as terakhir from "+PhotoTable.TABLE_NAME+" group by "+PhotoTable.C_ID_PASIEN+")b on a."+PatientTable.C_ID+" = b.id_pasien left outer join "
 				+ "(select "+CommentTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalpesanbaru from "+CommentTable.TABLE_NAME+" where "+CommentTable.C_HASSEEN+" = 0 and "+CommentTable.C_ID_DOKTER+" <> ? "+" group by "+CommentTable.C_ID_USGPASIEN+") c on a."+PatientTable.C_ID+" = c.id_pasien left outer join "
-				+ "(select "+ValidationTable.C_ID_USGPASIEN+" as id_pasien, count(*) as totalvalidasibaru from "+ValidationTable.TABLE_NAME+" where "+ValidationTable.C_HASSEEN+" = 0 group by "+ValidationTable.C_ID_USGPASIEN+") d on a."+PatientTable.C_ID+" = d.id_pasien", new String[]{ktpDoctor, ktpDoctor});
+				+ "(select T."+PhotoTable.C_ID_PASIEN+" as id_pasien, count(*) as totalvalidasibaru from "+PhotoTable.TABLE_NAME+" T LEFT OUTER JOIN "+ValidationTable.TABLE_NAME+" R ON R."+ValidationTable.C_ID_USGPASIEN+"=T."+PhotoTable.C_ID_PASIEN+" and R."+ValidationTable.C_ID_USGKANDUNGAN+"=T."+PhotoTable.C_ID_KANDUNGAN+" and R."+ValidationTable.C_ID_USGFOTO+"=T."+PhotoTable.C_ID+" where R."+ValidationTable.C_ID_USGPASIEN+" IS NULL group by T."+PhotoTable.C_ID_PASIEN+") d on a."+PatientTable.C_ID+" = d.id_pasien", new String[]{ktpDoctor, ktpDoctor});
 	}
 	
 
@@ -598,7 +607,7 @@ public class USGDBHelper extends SQLiteOpenHelper {
 	}
 	
 	public Cursor getNewComment(long lastSync){
-		return komentarTable.getCursorOfNewItems(database, new String[]{"-1","-1","-1","-1",""+lastSync});
+		return komentarTable.getCursorOfNewItems(database, new String[]{"-1","-1",""+lastSync});
 	}
 	
 	public Cursor getExpiredPatientPhoto(){
@@ -666,7 +675,7 @@ public class USGDBHelper extends SQLiteOpenHelper {
 	}
 	
 	public Cursor getUpdateComment(long lastSync){
-		return komentarTable.getCursorOfUpdateItems(database, new String[]{"-1","-1","-1","-1",""+lastSync});
+		return komentarTable.getCursorOfUpdateItems(database, new String[]{"-1","-1",""+lastSync});
 	}
 	
 	public SQLiteDatabase getDatabase() {
@@ -767,11 +776,14 @@ public class USGDBHelper extends SQLiteOpenHelper {
 		cv.put(USGTable.C_ISACTIVE, 0);
 		cv.put(USGTable.C_DIRTY, 1);
 		String[] args = {patientId};
-		database.update(PatientTable.TABLE_NAME, cv, pasienTable.getPrimaryClause(), args);
-		database.update(PregnancyTable.TABLE_NAME, cv, PregnancyTable.C_ID_PASIEN+"=?", args);
-		database.update(PhotoTable.TABLE_NAME, cv, PhotoTable.C_ID_PASIEN+"=?", args);
-		database.update(CommentTable.TABLE_NAME, cv, CommentTable.C_ID_USGPASIEN+"=?", args);
-		database.update(ValidationTable.TABLE_NAME, cv, ValidationTable.C_ID_USGPASIEN+"=?", args);		
+		int a = database.update(PatientTable.TABLE_NAME, cv, pasienTable.getPrimaryClause(), args);
+		int b =database.update(PregnancyTable.TABLE_NAME, cv, PregnancyTable.C_ID_PASIEN+"=?", args);
+		int c =database.update(PhotoTable.TABLE_NAME, cv, PhotoTable.C_ID_PASIEN+"=?", args);
+		int d =database.update(CommentTable.TABLE_NAME, cv, CommentTable.C_ID_USGPASIEN+"=?", args);
+		int e =database.update(ValidationTable.TABLE_NAME, cv, ValidationTable.C_ID_USGPASIEN+"=?", args);
+		
+		Patient p = PatientConverter.convert(database.query(PatientTable.TABLE_NAME, pasienTable.getAllColumns(), pasienTable.getPrimaryClause(), args, null, null, null));
+		Log.d("Delete patient", "pas:preg:pho:com:val = "+a+"-"+b+"-"+c+"-"+d+"-"+e+"+"+p.toString());
 	}
 	
 	public void deletePregnancy(String patientId, int pregnancyId) {
@@ -781,7 +793,10 @@ public class USGDBHelper extends SQLiteOpenHelper {
 		long timestamp = DateUtils.getCurrentLong();
 		cv.put(USGTable.C_MODIFYSTAMP, timestamp);
 		String[] args = {patientId, ""+pregnancyId};
-		database.update(PregnancyTable.TABLE_NAME, cv, PregnancyTable.C_ID_PASIEN+"=? and "+PregnancyTable.C_ID+"=?", args);
+		int result = database.update(PregnancyTable.TABLE_NAME, cv, PregnancyTable.C_ID_PASIEN+"=? and "+PregnancyTable.C_ID+"=?", args);
+		Log.d("Updated pregnancy", "a:"+ result);
+		Pregnancy p = PregnancyConverter.convert(kandunganTable.getItem(database, new String[]{pregnancyId+"", patientId}));
+		Log.d("Boleh2", p.toString());
 		database.update(PhotoTable.TABLE_NAME, cv, PhotoTable.C_ID_PASIEN+"=? and "+PhotoTable.C_ID_KANDUNGAN+"=?", args);
 		database.update(ValidationTable.TABLE_NAME, cv, ValidationTable.C_ID_USGPASIEN+"=? and "+ValidationTable.C_ID_USGKANDUNGAN+"=?", args);			
 	}

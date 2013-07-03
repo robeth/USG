@@ -2,10 +2,14 @@ package id.fruity.usg;
 
 import id.fruity.usg.database.USGDBHelper;
 import id.fruity.usg.database.converter.PhotoConverter;
+import id.fruity.usg.database.converter.ValidationConverter;
 import id.fruity.usg.database.table.entry.Photo;
 import id.fruity.usg.database.table.entry.Pregnancy;
+import id.fruity.usg.database.table.entry.Validation;
+import id.fruity.usg.model.Analyzer;
 import id.fruity.usg.model.KandunganModel;
 import id.fruity.usg.util.DateUtils;
+import id.fruity.usg.util.Ellipse;
 
 import java.util.ArrayList;
 
@@ -41,7 +45,6 @@ public class PatientUSGFragment extends SherlockFragment {
 	private boolean isDoctor;
 	private Dialog usgDialog;
 	private int chosenNoKandungan;
-	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -60,8 +63,19 @@ public class PatientUSGFragment extends SherlockFragment {
 			ArrayList<Photo> photos = PhotoConverter.convertAll(helper
 					.getPhotosOfKandungan(patientId, kms.get(i)
 							.getNoKandungan()));
+			ArrayList<Boolean> statuses = new ArrayList<Boolean>();
+			for (int j = 0; j < photos.size(); j++) {
+				ArrayList<Validation> v = ValidationConverter.convertAll(helper
+						.getValidations(photos.get(j).getNoPhoto(),
+								photos.get(j).getNoKandungan(), photos.get(j)
+										.getIdPasien()));
+				statuses.add(!v.isEmpty());
+			}
 			Log.d("Pasien USG Fragment", "Photos size:" + photos.size());
 			kms.get(i).setFotos(photos);
+			kms.get(i).setValidateStatuses(statuses);
+			kms.get(i).setStatus(Analyzer.analyzeGrowth(photos));
+			Log.d("Analyzer result", "status:"+kms.get(i).getStatus());
 		}
 		helper.close();
 
@@ -77,38 +91,54 @@ public class PatientUSGFragment extends SherlockFragment {
 		elv = (ExpandableListView) v.findViewById(R.id.usg_group);
 		elv.setClickable(true);
 		elv.setDividerHeight(2);
-		UsgAdapter adapter = new UsgAdapter(kms,isDoctor);
+		UsgAdapter adapter = new UsgAdapter(kms, isDoctor);
 		adapter.setInflater(inflater, getActivity());
-		
-		elv.setOnItemLongClickListener(new OnItemLongClickListener() {
-		    @Override
-		    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		        if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-		            int groupPosition = ExpandableListView.getPackedPositionGroup(id);
-		            int childPosition = ExpandableListView.getPackedPositionChild(id);
-		            Toast.makeText(getActivity(), "child "+ position+" "+groupPosition+" "+childPosition, Toast.LENGTH_SHORT).show();
-		            Photo p = ((UsgAdapter)elv.getExpandableListAdapter()).getChild(groupPosition, childPosition);
-		            popUpDeletePhotoDialog(p.getIdPasien(), p.getNoKandungan(), p.getNoPhoto());
-		            return true;
-		        } else if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_GROUP){
-		        	int groupPosition = ExpandableListView.getPackedPositionGroup(id);
-		        	KandunganModel km = ((UsgAdapter)elv.getExpandableListAdapter()).getGroup(groupPosition);
-		        	Toast.makeText(getActivity(), "group "+position+" "+groupPosition, Toast.LENGTH_SHORT).show();
-		        	popUpDeletePregnancyDialog(km.getIdPasien(), km.getNoKandungan());
-		        	return true;
-		        }
 
-		        return false;
-		    }
+		elv.setOnItemLongClickListener(new OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+					int groupPosition = ExpandableListView
+							.getPackedPositionGroup(id);
+					int childPosition = ExpandableListView
+							.getPackedPositionChild(id);
+					Toast.makeText(
+							getActivity(),
+							"child " + position + " " + groupPosition + " "
+									+ childPosition, Toast.LENGTH_SHORT).show();
+					Photo p = ((UsgAdapter) elv.getExpandableListAdapter())
+							.getChild(groupPosition, childPosition);
+					popUpDeletePhotoDialog(p.getIdPasien(), p.getNoKandungan(),
+							p.getNoPhoto());
+					return true;
+				} else if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+					int groupPosition = ExpandableListView
+							.getPackedPositionGroup(id);
+					KandunganModel km = ((UsgAdapter) elv
+							.getExpandableListAdapter())
+							.getGroup(groupPosition);
+					Toast.makeText(getActivity(),
+							"group " + position + " " + groupPosition,
+							Toast.LENGTH_SHORT).show();
+					popUpDeletePregnancyDialog(km.getIdPasien(),
+							km.getNoKandungan());
+					return true;
+				}
+
+				return false;
+			}
 		});
 		elv.setOnChildClickListener(new OnChildClickListener() {
-			
+
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v,
 					int groupPosition, int childPosition, long id) {
-				Log.d("ChildClick", groupPosition+" "+childPosition );
-				Photo p = ((UsgAdapter)elv.getExpandableListAdapter()).getChild(groupPosition, childPosition);
-	            Intent i = new Intent(PatientUSGFragment.this.getActivity(), UsgActivity.class);
+				Log.d("ChildClick", groupPosition + " " + childPosition);
+				Photo p = ((UsgAdapter) elv.getExpandableListAdapter())
+						.getChild(groupPosition, childPosition);
+				Intent i = new Intent(PatientUSGFragment.this.getActivity(),
+						UsgActivity.class);
 				Bundle b = new Bundle();
 				b.putString("patientId", patientId);
 				b.putInt("pregnancyId", p.getNoKandungan());
@@ -121,7 +151,6 @@ public class PatientUSGFragment extends SherlockFragment {
 			}
 		});
 
-		
 		elv.setAdapter(adapter);
 		elv.expandGroup(0);
 		return v;
@@ -133,11 +162,22 @@ public class PatientUSGFragment extends SherlockFragment {
 		kms = km.getItems(helper.getKandunganOfPatient(patientId));
 
 		for (int i = 0; i < kms.size(); i++) {
-			ArrayList<Photo> fms = PhotoConverter.convertAll(helper
+			ArrayList<Photo> photos = PhotoConverter.convertAll(helper
 					.getPhotosOfKandungan(patientId, kms.get(i)
 							.getNoKandungan()));
-			Log.d("Pasien USG Fragment", "Photos size:" + fms.size());
-			kms.get(i).setFotos(fms);
+			ArrayList<Boolean> statuses = new ArrayList<Boolean>();
+			for (int j = 0; j < photos.size(); j++) {
+				ArrayList<Validation> v = ValidationConverter.convertAll(helper
+						.getValidations(photos.get(j).getNoPhoto(),
+								photos.get(j).getNoKandungan(), photos.get(j)
+										.getIdPasien()));
+				statuses.add(!v.isEmpty());
+			}
+			Log.d("Pasien USG Fragment", "Photos size:" + photos.size());
+			kms.get(i).setFotos(photos);
+			kms.get(i).setValidateStatuses(statuses);
+			kms.get(i).setStatus(Analyzer.analyzeGrowth(photos));
+			Log.d("Analyzer result", "status:"+kms.get(i).getStatus());
 		}
 		helper.close();
 		UsgAdapter adapter = new UsgAdapter(kms, isDoctor);
@@ -165,8 +205,16 @@ public class PatientUSGFragment extends SherlockFragment {
 		alert.setPositiveButton("Tambah",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-						int noKandungan = Integer.parseInt(input.getText()
-								.toString().trim());
+						int noKandungan = 0;
+						try {
+							noKandungan = Integer.parseInt(input.getText()
+									.toString().trim());
+						} catch (NumberFormatException ne) {
+							Toast.makeText(
+									PatientUSGFragment.this.getActivity(),
+									"Invalid input", Toast.LENGTH_SHORT).show();
+							return;
+						}
 						helper.open();
 						boolean isExist = helper.isKandunganExist(patientId,
 								noKandungan);
@@ -174,8 +222,8 @@ public class PatientUSGFragment extends SherlockFragment {
 						if (!isExist) {
 							long currentTime = DateUtils.getCurrentLong();
 							Pregnancy k = new Pregnancy(-1, true, true,
-									currentTime, currentTime, noKandungan,
-									""+patientId, false, "-1");
+									currentTime, currentTime, noKandungan, ""
+											+ patientId, false, "-1");
 							helper.insertPregnancy(k);
 							refreshData();
 						} else {
@@ -196,10 +244,19 @@ public class PatientUSGFragment extends SherlockFragment {
 		});
 		alert.show();
 	}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		refreshData();
+	}
 
 	public void popUpUSGDialog() {
-		if(kms.isEmpty()){
-			Toast.makeText(this.getActivity(), "Please add pregnancy data first. No pregnancy data exists.", Toast.LENGTH_SHORT).show();
+		if (kms.isEmpty()) {
+			Toast.makeText(
+					this.getActivity(),
+					"Please add pregnancy data first. No pregnancy data exists.",
+					Toast.LENGTH_SHORT).show();
 			return;
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -226,7 +283,8 @@ public class PatientUSGFragment extends SherlockFragment {
 						"Chosen kandungan: " + chosenNoKandungan,
 						Toast.LENGTH_SHORT).show();
 				usgDialog.dismiss();
-				((PatientActivity) getActivity()).sendImageRequestDummy(patientId,chosenNoKandungan);
+				((PatientActivity) getActivity()).sendImageRequestDummy(
+						patientId, chosenNoKandungan);
 			}
 
 		});
@@ -242,19 +300,20 @@ public class PatientUSGFragment extends SherlockFragment {
 		long currentTime = DateUtils.getCurrentLong();
 		int lastIndex = helper.getLastIndexOfPhotos(patientId,
 				chosenNoKandungan);
-		
+
 		Photo uf = new Photo(-1, true, true, currentTime, currentTime,
-				lastIndex + 1, -1, absolutePath, -1, -1, -1, -1, -1, -1,
-				"Not yet", patientId, chosenNoKandungan, userId,
-				"-1", -1, "-1", currentTime, -1);
+				lastIndex + 1, -1, absolutePath, -1, -1, -1, -1, -1, Ellipse.SCALING,
+				"Not yet", patientId, chosenNoKandungan, userId, "-1", -1,
+				"-1", currentTime, -1);
 		helper.insertPhoto(uf);
 		helper.close();
 		refreshData();
 	}
-	
-	private void popUpDeletePregnancyDialog(final String iPatientId, final int iPregnancyId) {
+
+	private void popUpDeletePregnancyDialog(final String iPatientId,
+			final int iPregnancyId) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this.getActivity());
-		alert.setTitle("Delete Pregnancy "+iPregnancyId);
+		alert.setTitle("Delete Pregnancy " + iPregnancyId);
 		alert.setMessage("All related USG photo data will also be deleted.");
 
 		alert.setPositiveButton("Confirm",
@@ -267,15 +326,17 @@ public class PatientUSGFragment extends SherlockFragment {
 					}
 				});
 
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				// do nothing
-			}
-		});
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						// do nothing
+					}
+				});
 		alert.show();
 	}
-	
-	private void popUpDeletePhotoDialog(final String iPatientId, final int iPregnancyId, final int iPhotoId) {
+
+	private void popUpDeletePhotoDialog(final String iPatientId,
+			final int iPregnancyId, final int iPhotoId) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this.getActivity());
 		alert.setTitle("Delete USG Photo");
 		alert.setMessage("This USG photo will be deleted.");
@@ -290,11 +351,12 @@ public class PatientUSGFragment extends SherlockFragment {
 					}
 				});
 
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				// do nothing
-			}
-		});
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						// do nothing
+					}
+				});
 		alert.show();
 	}
 }

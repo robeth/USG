@@ -310,4 +310,14 @@ public class Photo extends USGTableEntry implements Comparator<Photo> {
 		}
 		return 1;
 	}
+	
+	public static class TimestampComparator implements Comparator<Photo>{
+
+		@Override
+		public int compare(Photo lhs, Photo rhs) {
+			return (int) (lhs.getCreateTimestampLong() - rhs.getCreateTimestampLong());
+		}
+		
+	}
 }
+

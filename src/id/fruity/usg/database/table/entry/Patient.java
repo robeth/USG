@@ -135,14 +135,21 @@ public class Patient extends USGTableEntry{
 	public String[] getPrimaryArgs() {
 		return new String[]{""+idPasien};
 	}
+	
+	
+	
 	@Override
 	public String toString() {
 		return "Patient [idPasien=" + idPasien + ", name=" + name
 				+ ", address=" + address + ", phone=" + phone + ", birthdate="
 				+ birthdate + ", filename=" + filename + ", description="
-				+ description + ", serverId=" + serverId + "]";
+				+ description + ", serverId=" + serverId + ", photoTimestamp="
+				+ photoTimestamp + ", serverPhotoTimestamp="
+				+ serverPhotoTimestamp + ", isDirty()=" + isDirty()
+				+ ", isActive()=" + isActive() + ", getModifyTimestampLong()="
+				+ getModifyTimestampLong() + ", getCreateTimestampLong()="
+				+ getCreateTimestampLong() + "]";
 	}
-	
 	public void onServerAdd(){
 		idPasien = serverId;
 		setDirty(false);

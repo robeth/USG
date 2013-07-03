@@ -181,9 +181,6 @@ public class PatientActivity extends SherlockFragmentActivity implements
 			finish();
 		} else if (currentFragmentIndex == PROFILE_MODE) {
 			editMode = startActionMode(new AnActionModeOfEpicProportions());
-			if (currentFragment instanceof PatientProfileFragment) {
-				((PatientProfileFragment) currentFragment).setEditable(true);
-			}
 		} else if (currentFragmentIndex == USG_MODE) {
 			if (item.getTitle().equals("Add USG")) {
 				((PatientUSGFragment) currentFragment).popUpUSGDialog();
@@ -194,9 +191,9 @@ public class PatientActivity extends SherlockFragmentActivity implements
 		} else if (currentFragmentIndex == STAT_MODE) {
 
 		} else if (currentFragmentIndex == MESSAGE_MODE) {
-			if(item.getTitle().equals("Mark As Read")){
+			if (item.getTitle().equals("Mark As Read")) {
 				helper.open();
-				if(isDoctor){
+				if (isDoctor) {
 					helper.markMessagesAsDoctor(patientId, userId);
 				} else {
 					helper.markMessagesAsOfficer(patientId);
@@ -211,7 +208,14 @@ public class PatientActivity extends SherlockFragmentActivity implements
 			ActionMode.Callback {
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-
+			menu.add("Confirm").setShowAsAction(
+					MenuItem.SHOW_AS_ACTION_ALWAYS
+							| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+			menu.add("Cancel").setShowAsAction(
+					MenuItem.SHOW_AS_ACTION_ALWAYS
+							| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+			((PatientProfileFragment) currentFragment).setEditable(true);
+			((PatientProfileFragment) currentFragment).backupData();
 			return true;
 		}
 
@@ -222,17 +226,27 @@ public class PatientActivity extends SherlockFragmentActivity implements
 
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			if (item.getTitle().equals("Confirm")) {
+				if (currentFragment instanceof PatientProfileFragment) {
+					((PatientProfileFragment) currentFragment)
+							.notifyHasEditted();
+					
+					Toast.makeText(PatientActivity.this, "Data is successfully saved", Toast.LENGTH_SHORT).show();
+					editMode.finish();
+				}
+			} else if(item.getTitle().equals("Cancel")){
+				if(currentFragment instanceof PatientProfileFragment){
+					((PatientProfileFragment) currentFragment).notifyNotEditted();
+					Toast.makeText(PatientActivity.this, "Data is not saved", Toast.LENGTH_SHORT).show();
+					editMode.finish();
+				}
+			}
 			return true;
 		}
 
 		@Override
 		public void onDestroyActionMode(ActionMode mode) {
-			Toast.makeText(PatientActivity.this, "OnDestroyActionMode",
-					Toast.LENGTH_SHORT).show();
-			if (currentFragment instanceof PatientProfileFragment) {
-				((PatientProfileFragment) currentFragment).notifyHasEditted();
-
-			}
+			
 		}
 
 	}
@@ -335,7 +349,8 @@ public class PatientActivity extends SherlockFragmentActivity implements
 		File mediaFile;
 		if (type == MEDIA_TYPE_IMAGE) {
 			tempRealFileName = "usg_" + timeStamp + ".jpg";
-			mediaFile = new File(mediaStorageDir.getPath() + File.separator+tempRealFileName);
+			mediaFile = new File(mediaStorageDir.getPath() + File.separator
+					+ tempRealFileName);
 		} else {
 			return null;
 		}

@@ -5,6 +5,7 @@ import id.fruity.usg.database.converter.ClinicConverter;
 import id.fruity.usg.database.converter.UserConverter;
 import id.fruity.usg.database.table.entry.Clinic;
 import id.fruity.usg.database.table.entry.User;
+import id.fruity.usg.model.Analyzer;
 import id.fruity.usg.remote.RemoteUtils;
 import id.fruity.usg.remote.RemoteUtils.SyncCallback;
 import id.fruity.usg.remote.Synchonization;
@@ -46,26 +47,23 @@ public class PatientListActivity extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		Preference.A = this;
 		Synchonization.A = this;
-
+		Analyzer.A = this;
 		Bundle b = getIntent().getExtras();
-		String username = "username1";//b.getString("username");
+		String username = b.getString("username");
 		
-		this.deleteDatabase(USGDBHelper.DATABASE_NAME);
+//		this.deleteDatabase(USGDBHelper.DATABASE_NAME);
 		helper = USGDBHelper.getInstance(this);
 		helper.open();
-		helper.test2();
+//		helper.test2();
 		
 		Log.d("HOmescreen", "Check:"+helper.isUserExist(username));
-//		if(!helper.isUserExist(username)){
-//			logout();
-//			return;
-//		}
+		if(!helper.isUserExist(username)){
+			logout();
+			return;
+		}
 		userId = helper.getIdOfUsername(username);
 		isDoctor = helper.isDoctor(userId);
-		
-		// Fix header
-		long lastSync = 1;//Preference.getLastSync();
-		Preference.setLastSync(1);
+		long lastSync = Preference.getLastSync();
 		
 		String lastSyncString = DateUtils.getStringOfCalendarFromLong(lastSync);
 		Log.d("HOmescreen", "Check Last SYnc:"+lastSync);
@@ -162,10 +160,6 @@ public class PatientListActivity extends SherlockFragmentActivity {
 			SyncTask d = new SyncTask();
 			d.execute();
 		} else if (item.getTitle().equals(INFO_TITLE)) {
-			this.deleteDatabase(USGDBHelper.DATABASE_NAME);
-			helper.open();
-			helper.test();
-			helper.close();
 		} else if (item.getTitle().equals(SORT_CHAR_TITLE)){
 			
 		} else if (item.getTitle().equals(SORT_DATE_TITLE)){
@@ -212,43 +206,53 @@ public class PatientListActivity extends SherlockFragmentActivity {
 			int counter = 0;
 			try {
 				synchronized (this) {
-					long timestamp = DateUtils.getCurrentLong();
+					final long timestamp = DateUtils.getCurrentLong();
 					result = RemoteUtils.syncUser(timestamp);
 					publishProgress(++counter);
-					this.wait(500);
+					this.wait(100);
 					result = RemoteUtils.syncDoctor(timestamp);
 					publishProgress(++counter);
-					this.wait(500);
+					this.wait(100);
 					result = RemoteUtils.syncClinic(timestamp);
 					publishProgress(++counter);
-					this.wait(500);
+					this.wait(100);
 					result = RemoteUtils.syncOfficer(timestamp);
 					publishProgress(++counter);
-					this.wait(500);
+					this.wait(100);
 					result = RemoteUtils.syncPatient(timestamp);
 					publishProgress(++counter);
-					this.wait(500);
+					this.wait(100);
 					result = RemoteUtils.syncPregnancy(timestamp);
 					publishProgress(++counter);
-					this.wait(500);
+					this.wait(100);
 					result = RemoteUtils.syncPhoto(timestamp);
 					publishProgress(++counter);
-					this.wait(500);
+					this.wait(100);
 					result = RemoteUtils.syncServe(timestamp);
 					publishProgress(++counter);
-					this.wait(500);
+					this.wait(100);
 					result = RemoteUtils.syncWorksOn(timestamp);
 					publishProgress(++counter);
-					this.wait(500);
+					this.wait(100);
 					result = RemoteUtils.syncComment(timestamp);
 					publishProgress(++counter);
-					this.wait(500);
+					this.wait(100);
 					result = RemoteUtils.syncValidation(timestamp);
 					publishProgress(++counter);
 					RemoteUtils.syncPhotoFile();
 					publishProgress(++counter);
 					Preference.setLastSync(timestamp);
-					Log.d("Timestamp", "::"+timestamp+"---"+Preference.getLastSync());
+					PatientListActivity.this.runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							String lastSyncString = DateUtils.getStringOfCalendarFromLong(timestamp);
+							getSupportActionBar().setSubtitle(lastSyncString);
+							Log.d("Timestamp", "::"+timestamp+"---"+Preference.getLastSync());
+						}
+					});
+					
 					
 				}
 				
@@ -270,6 +274,12 @@ public class PatientListActivity extends SherlockFragmentActivity {
 		}
 	}
 	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		refreshFragmentData();
+	}
+
 	private void refreshFragmentData(){
 		((PatientListFragment )listFragment).reloadData();
 	}
