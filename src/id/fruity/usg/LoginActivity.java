@@ -1,10 +1,10 @@
 package id.fruity.usg;
 
 import id.fruity.usg.database.USGDBHelper;
-import id.fruity.usg.model.Analyzer;
 import id.fruity.usg.remote.RemoteUtils;
 import id.fruity.usg.remote.Synchonization;
 import id.fruity.usg.remote.RemoteUtils.SyncCallback;
+import id.fruity.usg.util.Analyzer;
 import id.fruity.usg.util.Preference;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 public class LoginActivity extends Activity {
 	private EditText usernameField, passwordField;
-	private Button loginButton;
+	private Button loginButton, experimentButton;
 	private USGDBHelper helper;
 	private ProgressDialog progressDialog;
 	private OnClickListener loginListener = new OnClickListener() {
@@ -32,6 +32,13 @@ public class LoginActivity extends Activity {
 		public void onClick(View v) {
 			LoginTask t = new LoginTask();
 			t.execute();
+		}
+	};
+	private OnClickListener experimentListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			Intent i = new Intent(LoginActivity.this, ExperimentActivity.class);
+			startActivity(i);
 		}
 	};
 
@@ -55,9 +62,9 @@ public class LoginActivity extends Activity {
 		usernameField = (EditText) findViewById(R.id.username);
 		passwordField = (EditText) findViewById(R.id.password);
 		loginButton = (Button) findViewById(R.id.login);
-
+		experimentButton = (Button) findViewById(R.id.experiment);
 		loginButton.setOnClickListener(loginListener);
-
+		experimentButton.setOnClickListener(experimentListener);
 	}
 
 	private void gotoHomeScreen(String username, boolean status) {

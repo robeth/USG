@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
     
     <RelativeLayout
+        android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
@@ -48,7 +49,14 @@
         
     </RelativeLayout>
     
+    <Button
+            android:id="@+id/experiment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/content"
+            android:padding="8dp"
+            android:layout_marginTop="10dp"
+            android:text="Experiment" />
     
-    
-
 </RelativeLayout>

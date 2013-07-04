@@ -1,4 +1,4 @@
-package id.fruity.usg.model;
+package id.fruity.usg.util;
 
 import id.fruity.usg.database.USGDBHelper;
 import id.fruity.usg.database.converter.ValidationConverter;
@@ -7,8 +7,6 @@ import id.fruity.usg.database.table.entry.Validation;
 import id.fruity.usg.grow.GestationalAge;
 import id.fruity.usg.grow.ProportionalityFunction;
 import id.fruity.usg.grow.TOW;
-import id.fruity.usg.util.DateUtils;
-import id.fruity.usg.util.Ellipse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +34,7 @@ public class Analyzer {
 		
 		// Check if no growth in the last photos
 		getCurrentStats(ps);
+		Log.d("Weight", weights[weights.length-1]+" -->"+weights[weights.length-2]);
 		if(weights[weights.length-1] <= weights[weights.length -2]){
 			return NO_GROWTH;
 		}
@@ -45,7 +44,7 @@ public class Analyzer {
 		float upper = ProportionalityFunction.upperTow(tow,(float) dates[dates.length-1]);
 		if(weights[weights.length -1] <= lower) return UNDER_GROWTH;
 		else if(weights[weights.length -1] >= upper) return OVERGROWTH;
-		return NO_GROWTH;
+		return NORMAL_GROWTH;
 		
 	}
 	

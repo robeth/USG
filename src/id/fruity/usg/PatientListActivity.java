@@ -5,10 +5,10 @@ import id.fruity.usg.database.converter.ClinicConverter;
 import id.fruity.usg.database.converter.UserConverter;
 import id.fruity.usg.database.table.entry.Clinic;
 import id.fruity.usg.database.table.entry.User;
-import id.fruity.usg.model.Analyzer;
 import id.fruity.usg.remote.RemoteUtils;
 import id.fruity.usg.remote.RemoteUtils.SyncCallback;
 import id.fruity.usg.remote.Synchonization;
+import id.fruity.usg.util.Analyzer;
 import id.fruity.usg.util.DateUtils;
 import id.fruity.usg.util.Preference;
 import android.app.ProgressDialog;
@@ -160,6 +160,8 @@ public class PatientListActivity extends SherlockFragmentActivity {
 			SyncTask d = new SyncTask();
 			d.execute();
 		} else if (item.getTitle().equals(INFO_TITLE)) {
+			Intent i = new Intent(this, ExperimentActivity.class);
+			startActivity(i);
 		} else if (item.getTitle().equals(SORT_CHAR_TITLE)){
 			
 		} else if (item.getTitle().equals(SORT_DATE_TITLE)){

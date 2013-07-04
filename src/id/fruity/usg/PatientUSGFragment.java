@@ -6,8 +6,8 @@ import id.fruity.usg.database.converter.ValidationConverter;
 import id.fruity.usg.database.table.entry.Photo;
 import id.fruity.usg.database.table.entry.Pregnancy;
 import id.fruity.usg.database.table.entry.Validation;
-import id.fruity.usg.model.Analyzer;
 import id.fruity.usg.model.KandunganModel;
+import id.fruity.usg.util.Analyzer;
 import id.fruity.usg.util.DateUtils;
 import id.fruity.usg.util.Ellipse;
 

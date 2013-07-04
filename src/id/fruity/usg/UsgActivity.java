@@ -357,6 +357,8 @@ public class UsgActivity extends SherlockActivity {
 			res = 0;
 		} else if (method.equals("IRHT")) {
 			res = 1;
+		} else if (method.equals("PSO-RHT 2D")){
+			res = 2;
 		}
 		return res;
 	}
@@ -402,6 +404,8 @@ public class UsgActivity extends SherlockActivity {
 			rs = RHT(m1.getNativeObjAddr());
 		} else if (selectedMethod == 1) {
 			rs = IRHT(m1.getNativeObjAddr());
+		} else if (selectedMethod == 2){
+			rs = PSO(m1.getNativeObjAddr());
 		}
 
 		Log.d("Result", "length" + rs.length + "[" + rs[0] + "," + rs[1] + ","
@@ -535,7 +539,7 @@ public class UsgActivity extends SherlockActivity {
 
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-			if (item.getTitle().equals("Confirm")) {
+			if (item.getTitle().equals("Accept")) {
 				Toast.makeText(UsgActivity.this,
 						"Validation is successfully saved", Toast.LENGTH_SHORT)
 						.show();

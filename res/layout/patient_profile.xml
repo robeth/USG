@@ -10,32 +10,14 @@
         android:layout_height="120dp"
         android:src="@drawable/mother_icon" />
 
-    <TextView
-        android:id="@+id/patient_age"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/patient_photo"
-        android:layout_alignParentTop="true"
-        android:text="25"
-        android:layout_margin="10dp"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    <TextView
-        android:id="@+id/patient_age_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/patient_age"
-        android:layout_alignParentTop="true"
-        android:text="Tahun"
-        android:layout_marginTop="10dp"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+
     
     <EditText
         android:id="@+id/patient_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/patient_age"
-        android:layout_alignLeft="@id/patient_age"
+        android:layout_toRightOf="@id/patient_photo"
+        android:layout_alignParentTop="true"
         android:layout_marginTop="10dp"
         android:ems="10"
         android:maxLength="20"

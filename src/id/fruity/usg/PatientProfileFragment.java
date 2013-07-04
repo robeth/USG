@@ -20,7 +20,6 @@ public class PatientProfileFragment extends SherlockFragment {
 	 private Patient p;
 	 private String patientId;
 	 private ImageView photoView;
-	 private TextView ageText;
 	 private EditText nameText, addressText, phoneText, infoText, ktpText;
 	 private String bName, bAddress, bPhone, bInfo, bKtp;
 	 
@@ -45,7 +44,6 @@ public class PatientProfileFragment extends SherlockFragment {
              Bundle savedInstanceState) {
          View v = inflater.inflate(R.layout.patient_profile, container, false);
          photoView = (ImageView) v.findViewById(R.id.patient_photo);
-         ageText = (TextView) v.findViewById(R.id.patient_age);
          nameText = (EditText) v.findViewById(R.id.patient_name);
          addressText = (EditText) v.findViewById(R.id.patient_address);
          phoneText = (EditText) v.findViewById(R.id.patient_phone);

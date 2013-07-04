@@ -211,7 +211,7 @@ public class PatientStatFragment extends SherlockFragment {
 			((XYSeriesRenderer) renderer.getSeriesRendererAt(i))
 					.setFillPoints(true);
 		}
-		setChartSettings(renderer, "Average temperature", "Gestational Age",
+		setChartSettings(renderer, "Fetal Growth", "Gestational Age",
 				"Gestational Weight", startWeek - 2, lastWeek + 2, 0,
 				TOW.getDefaultTOW(), Color.BLACK, Color.BLACK);
 		renderer.setXLabels(10);
@@ -230,10 +230,12 @@ public class PatientStatFragment extends SherlockFragment {
 		renderer.setYLabelsColor(0, Color.BLUE);
 		renderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
 
+		container.removeView(chartView);
 		chartView = ChartFactory.getCubeLineChartView(getActivity(),
 				buildDataset(titles, x, values), renderer, 0.33f);
 		container.addView(chartView, new LinearLayout.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		chartView.invalidate();
 	}
 
 	@Override

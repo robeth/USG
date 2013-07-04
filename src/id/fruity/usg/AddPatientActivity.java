@@ -32,7 +32,6 @@ import com.actionbarsherlock.view.MenuItem;
 public class AddPatientActivity extends SherlockActivity {
 	private USGDBHelper helper;
 	private ImageView photoView;
-	private TextView ageText;
 	private EditText ktpText, nameText, addressText, phoneText, infoText;
 	public static final int MEDIA_TYPE_IMAGE = 1;
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -63,7 +62,6 @@ public class AddPatientActivity extends SherlockActivity {
 
 		photoView = (ImageView) findViewById(R.id.patient_photo);
 		ktpText = (EditText) findViewById(R.id.patient_ktp);
-		ageText = (TextView) findViewById(R.id.patient_age);
 		nameText = (EditText) findViewById(R.id.patient_name);
 		addressText = (EditText) findViewById(R.id.patient_address);
 		phoneText = (EditText) findViewById(R.id.patient_phone);

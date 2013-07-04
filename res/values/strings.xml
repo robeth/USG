@@ -4,6 +4,7 @@
     <string-array name="usg_methods">
         <item>RHT</item>
         <item>IRHT</item>
+        <item>PSO-RHT 2D</item>
     </string-array>
     <string name="usg_method_prom" >Metode</string>
     <string name="usg_hc_default" >3.77 cm</string>
