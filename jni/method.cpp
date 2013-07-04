@@ -188,8 +188,8 @@ EllipseParams solveEllipseMatrixEquation() {
 		b[i][0] = pow((float) temp.x, 2) + pow((float) temp.y, 2);
 	}
 	Mat a1, b1, c;
-	a1 = Mat(sampleNumber, sampleNumber, CV_32FC1, a);
-	b1 = Mat(sampleNumber, 1, CV_32FC1, b);
+//	a1 = Mat(sampleNumber, sampleNumber, CV_32FC1, a);
+	//b1 = Mat(sampleNumber, 1, CV_32FC1, b);
 
 	//debugFloatArray(a1);
 //	debugFloatArray(b1);

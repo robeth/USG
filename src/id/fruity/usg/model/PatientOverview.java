@@ -1,11 +1,14 @@
 package id.fruity.usg.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+
+
 
 import android.database.Cursor;
 import android.util.Log;
 
-public class PatientOverview extends USGModel<PatientOverview>{
+public class PatientOverview extends USGModel implements Comparable<PatientOverview>{
 	private String idPasien;
 	private String name;
 	private long lastPhoto;
@@ -129,6 +132,25 @@ public class PatientOverview extends USGModel<PatientOverview>{
 				+ newMessageCount + ", newValidasiCount=" + newValidasiCount
 				+ ", totalPhoto=" + totalPhoto + "]";
 	}
+
+	@Override
+	public int compareTo(PatientOverview another) {		
+		return this.name.compareTo(another.name);
+	}
+	
+	public static Comparator<PatientOverview> PatientLastPhoto = new Comparator<PatientOverview>() {
+		
+	
+		@Override
+		public int compare(PatientOverview lhs, PatientOverview rhs) {
+			// TODO Auto-generated method stub
+			long tanggal1 = lhs.lastPhoto;
+			long tanggal2 = rhs.lastPhoto;
+			return (int) (tanggal2-tanggal1);
+		}
+
+	};
+	
 	
 	
 }

@@ -18,6 +18,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -26,7 +30,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.actionbarsherlock.widget.SearchView;
 
-public class PatientListActivity extends SherlockFragmentActivity {
+public class PatientListActivity extends SherlockFragmentActivity{
 	private static final String SYNC_TITLE = "Sync Now",
 			ADD_PATIENT_TITLE = "Add Patient", SORT_CHAR_TITLE = "Sort A-Z",
 			SORT_DATE_TITLE = "Urut tanggal", INFO_TITLE = "Info", LOGOUT = "Logout";
@@ -55,12 +59,11 @@ public class PatientListActivity extends SherlockFragmentActivity {
 		helper = USGDBHelper.getInstance(this);
 		helper.open();
 //		helper.test2();
-		
 		Log.d("HOmescreen", "Check:"+helper.isUserExist(username));
-		if(!helper.isUserExist(username)){
-			logout();
-			return;
-		}
+//		if(!helper.isUserExist(username)){
+//			logout();
+//			return;
+//		}
 		userId = helper.getIdOfUsername(username);
 		isDoctor = helper.isDoctor(userId);
 		long lastSync = Preference.getLastSync();
@@ -112,7 +115,30 @@ public class PatientListActivity extends SherlockFragmentActivity {
 		SearchView searchView = new SearchView(getSupportActionBar()
 				.getThemedContext());
 		searchView.setQueryHint("Search Patient Name");
+		//((PatientListFragment) listFragment).setSearch(searchView);
+	    //searchView.onActionViewExpanded();
+	    
+		//searchView.onActionViewExpanded();
+	    //String cari = searchView.getTag().toString();
+		
+		//cl = new ArrayList<CSNote>();
+		 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
+		        @Override
+		        public boolean onQueryTextSubmit(String query) {
+		            // TODO Auto-generated method stub
+		        	((PatientListFragment) listFragment).filter(query);
+		        	return true;
+		        }
+
+		        @Override
+		        public boolean onQueryTextChange(String newText) {
+		            // TODO Auto-generated method stub
+		        	((PatientListFragment) listFragment).filter(newText);
+		            return false;
+		        }
+		    });
+		
 		menu.add("Search").setIcon(R.drawable.action_search)
 				.setActionView(searchView)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -137,6 +163,7 @@ public class PatientListActivity extends SherlockFragmentActivity {
 		return true;
 	}
 	
+	
 	private void logout(){
 		Preference.setLastUsername("-1");
 		Preference.setLoggedIn(false);
@@ -147,6 +174,8 @@ public class PatientListActivity extends SherlockFragmentActivity {
 		return;
 	}
 
+
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getTitle().equals(ADD_PATIENT_TITLE)) {
@@ -163,12 +192,15 @@ public class PatientListActivity extends SherlockFragmentActivity {
 			Intent i = new Intent(this, ExperimentActivity.class);
 			startActivity(i);
 		} else if (item.getTitle().equals(SORT_CHAR_TITLE)){
-			
+			//pos2.clear()
+			//filter berdasarkan character --> pos2
+			((PatientListFragment) listFragment).sortByName();
 		} else if (item.getTitle().equals(SORT_DATE_TITLE)){
-			RemoteUtils.startPhotoSync(this);
+			((PatientListFragment) listFragment).sortByLastPhoto();
 		} else if (item.getTitle().equals(LOGOUT)){
 			logout();
-		}
+		} 
+		
 		return true;
 	}
 
@@ -285,5 +317,7 @@ public class PatientListActivity extends SherlockFragmentActivity {
 	private void refreshFragmentData(){
 		((PatientListFragment )listFragment).reloadData();
 	}
+
+	
 
 }
